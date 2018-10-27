@@ -1,0 +1,21 @@
+﻿  Moc'ing Widget6.h...
+  moc_Widget6.cpp
+  qrc_Widget6.cpp
+  Widget6.cpp
+  main.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_Init@0，该符号在函数 "public: __thiscall widget6::widget6(class QWidget *)" (??0widget6@@QAE@PAVQWidget@@@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_GetMaxCards@0，该符号在函数 "public: __thiscall widget6::widget6(class QWidget *)" (??0widget6@@QAE@PAVQWidget@@@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_GetVersion@16，该符号在函数 "public: __thiscall widget6::widget6(class QWidget *)" (??0widget6@@QAE@PAVQWidget@@@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_GetMaxChannels@4，该符号在函数 "public: __thiscall widget6::widget6(class QWidget *)" (??0widget6@@QAE@PAVQWidget@@@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_GpioReadIn@8，该符号在函数 "private: void __thiscall widget6::on_pushButton_GPIO_read_clicked(void)" (?on_pushButton_GPIO_read_clicked@widget6@@AAEXXZ) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_GpioWriteOut@8，该符号在函数 "private: void __thiscall widget6::on_pushButton_GPIO_write_clicked(void)" (?on_pushButton_GPIO_write_clicked@widget6@@AAEXXZ) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_GpioWriteOE@8，该符号在函数 "public: __thiscall widget6::widget6(class QWidget *)" (??0widget6@@QAE@PAVQWidget@@@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_I2cInit@16，该符号在函数 "public: __thiscall widget6::widget6(class QWidget *)" (??0widget6@@QAE@PAVQWidget@@@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_I2cWrite@12，该符号在函数 "void __cdecl eepLockClose(void)" (?eepLockClose@@YAXXZ) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_I2cRead@12，该符号在函数 "private: unsigned char __thiscall widget6::my_DC_I2cRead(unsigned char,int,int)" (?my_DC_I2cRead@widget6@@AAEEEHH@Z) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_I2cStart@8，该符号在函数 "void __cdecl eepLockClose(void)" (?eepLockClose@@YAXXZ) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_I2cStop@8，该符号在函数 "void __cdecl eepLockClose(void)" (?eepLockClose@@YAXXZ) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_SoftI2cWrite@24，该符号在函数 "private: void __thiscall widget6::on_pushButton_write_all_clicked(void)" (?on_pushButton_write_all_clicked@widget6@@AAEXXZ) 中被引用
+Widget6.obj : error LNK2019: 无法解析的外部符号 __imp__DC_SoftI2cRead@20，该符号在函数 "private: void __thiscall widget6::read_EEPROM(unsigned char,int)" (?read_EEPROM@widget6@@AAEXEH@Z) 中被引用
+D:\Documents\Visual Studio 2015\Projects\Widget6\Win32\Release\\Widget6.exe : fatal error LNK1120: 14 个无法解析的外部命令
