@@ -1554,7 +1554,7 @@ void widget6::findData(){
 
 		string tf = mEEP.barCode;
 		if (tf.compare(barCode) == 0) {
-			fout << mEEP.Time << endl;
+			fout << mEEP.Time << mEEP.FuseID << endl;
 			display_EEP();
 		}
 	}
@@ -3542,16 +3542,21 @@ void widget6::display_EEP() {
 
 	ui->input->clear();
 
-	for (int i = 0; i < 8192; i++) {
+	for (int i = 0; i < EEP_Size; i++) {
 	
 		getHex(DecData[i]);
 		string s = chk;
-		s += ' ';
+		s[2] = ' ';
+		s[3] = '\0';
 		ui->input->insertPlainText(s.c_str());
 
 		if (i % 16 == 15)
 			ui->input->insertPlainText("\n");
 	}
+
+	s = ui->input->document()->toPlainText().toLocal8Bit();
+	fout << s << endl<<endl;
+
 	ui->pushButton_checkSum->setEnabled(false);
 	ui->pushButton_parser->setEnabled(true);
 }
@@ -3640,7 +3645,7 @@ void widget6::on_pushButton_ois_repair_clicked() {
 		}
 		DecData[i] = hex2Dec(i);
 		Value_I2cStart = DC_I2cStart(0, 0);
-		Value_I2cWrite = DC_I2cWrite(0, 0, 0x2A);
+		Value_I2cWrite = DC_I2cWrite(0, 0, 0xA2);
 		Value_I2cWrite = DC_I2cWrite(0, 0, i / 256);
 		Value_I2cWrite = DC_I2cWrite(0, 0, i % 256);
 		Value_I2cWrite = DC_I2cWrite(0, 0, DecData[i]);
@@ -3661,7 +3666,7 @@ void widget6::on_pushButton_ois_repair_clicked() {
 	D[hallEnd][1] = chk[1];
 	//////////////////////
 	Value_I2cStart = DC_I2cStart(0, 0);
-	Value_I2cWrite = DC_I2cWrite(0, 0, 0x2A);
+	Value_I2cWrite = DC_I2cWrite(0, 0, 0xA2);
 	Value_I2cWrite = DC_I2cWrite(0, 0, hallEnd / 256);
 	Value_I2cWrite = DC_I2cWrite(0, 0, hallEnd % 256);
 	Value_I2cWrite = DC_I2cWrite(0, 0, DecData[hallEnd]);
@@ -3681,10 +3686,10 @@ void widget6::on_pushButton_ois_repair_clicked() {
 	D[totalCheckSum][1] = chk[1];
 
 	Value_I2cStart = DC_I2cStart(0, 0);
-	Value_I2cWrite = DC_I2cWrite(0, 0, 0x2A);
-	Value_I2cWrite = DC_I2cWrite(0, 0, tCheckSum / 256);
-	Value_I2cWrite = DC_I2cWrite(0, 0, tCheckSum % 256);
-	Value_I2cWrite = DC_I2cWrite(0, 0, DecData[tCheckSum]);
+	Value_I2cWrite = DC_I2cWrite(0, 0, 0xA2);
+	Value_I2cWrite = DC_I2cWrite(0, 0, totalCheckSum / 256);
+	Value_I2cWrite = DC_I2cWrite(0, 0, totalCheckSum % 256);
+	Value_I2cWrite = DC_I2cWrite(0, 0, DecData[totalCheckSum]);
 	DC_I2cStop(0, 0);
 	Sleep(10);
 	display_EEP();
