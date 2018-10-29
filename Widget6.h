@@ -59,6 +59,7 @@ private slots:
 	void on_pushButton_find_clicked();
 	void on_pushButton_GPIO_read_clicked();
 	void on_pushButton_GPIO_write_clicked();
+	void on_pushButton_GPIO_All_clicked();
 	void GPIO_display();
 	int  my_DC_I2cWrite(unsigned char s,int hi, int lo, unsigned char data);
 	unsigned char my_DC_I2cRead(unsigned char s, int hi, int lo);

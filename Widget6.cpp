@@ -737,6 +737,7 @@ void Delay(DWORD delayTime)
 void widget6::DisplayOutput() {
 
 	ui->output->clear();
+	ui->output->setFontPointSize(8);
 	ifstream in(".\\MemoryParseData.txt");
 	ostringstream outStr;
 	outStr << in.rdbuf();
@@ -819,17 +820,7 @@ void widget6::on_pushButton_read_all_clicked()
 	ui->input->setTextColor(QColor(0, 0, 0, 255));
 	ui->input->setFontPointSize(8);
 
-	for (int i = 0; i < EEP_Size; i++) {
-		getHex(DecData[i]);
-		string s = chk;
-		s[2] = ' ';
-		s[3] = '\0';
-		ui->input->insertPlainText(s.c_str());
-
-		if (i % 16 == 15)
-			ui->input->insertPlainText("\n");
-	}
-
+	display_EEP();
 }
 
 
@@ -1140,6 +1131,12 @@ void widget6::on_checkBox_17_clicked() {
 	GPIO_display();
 }
 
+void widget6::on_pushButton_GPIO_All_clicked() {
+	GPIO_Data = 262143;
+	GPIO_display();
+	Sleep(5);
+	on_pushButton_GPIO_write_clicked();
+}
 
 /*
 /////////////////////////////
@@ -1856,6 +1853,7 @@ void widget6::on_pushButton_parser_clicked()
 	EEPROM_Map = str1+ EEPROM_Map;
 	
 	save_EEPROM_Setting();
+
 	/////////////////////
 	if(modelSelect==3)
 		EEP_Size = 16384;
@@ -1881,9 +1879,9 @@ void widget6::on_pushButton_parser_clicked()
 			else now++;
 		}
 
-
+		display_EEP();
 		fout << "-------Check Sum Compare------" << endl;
-		fout << "(CheckSumItem)	(EEPROM_Value)	(Actual_Value)	(Flag_Value)	" << endl;
+		fout << "(ChkSum)	(EEPR)	(Calc.)	(Flag)	" << endl;
 
 		//Calc Total Check Sum
 		if (totalCheckSum > 0) {	
@@ -1901,12 +1899,13 @@ void widget6::on_pushButton_parser_clicked()
 			CheckSum_Check(awbLightStart, awbLightEnd, 5, 0, "Light5");
 			CheckSum_Check(awbLightStart2, awbLightEnd2, 3, 0, "Light4");
 			CheckSum_Check(awbLightStart3, awbLightEnd3, 2, 0, "Light3");
+			CheckSum_Check(AFhallStart, AFhallEnd, 1, 0, "AFHall");
 		}
 		else {
 			CheckSum_Check(awbStart, awbEnd, 1, 0, "AWBCal");
 		}
 
-		CheckSum_Check(AFhallStart, AFhallEnd, 1, 0, "AFHall");
+		
 		CheckSum_Check(hallStart, hallEnd, 1, 0, "OISHall");
 		CheckSum_Check(afDriftStart, afDriftEnd, 1, 0, "Drift");
 		CheckSum_Check(afStart, afEnd, 21, 0, "AFCal");
@@ -3541,21 +3540,33 @@ void widget6::on_pushButton_parser_clicked()
 void widget6::display_EEP() {
 
 	ui->input->clear();
-
+	ui->input->setFontPointSize(8);
 	for (int i = 0; i < EEP_Size; i++) {
-	
+
+		if (i % 16 == 0) {		
+			unsigned char a = i / 256;
+			getHex(a);
+			string s = chk;
+			s[2] =  '\0';
+			ui->input->insertPlainText(s.c_str());
+			unsigned char b = i % 256;
+			getHex(b);
+			char st[5] = {0};
+			st[0] = chk[0]; st[1] = chk[1]; st[2] = ':'; st[3] = ' ';
+			ui->input->insertPlainText(st);
+		}
+
 		getHex(DecData[i]);
-		string s = chk;
-		s[2] = ' ';
-		s[3] = '\0';
-		ui->input->insertPlainText(s.c_str());
+		char st[4] = { 0 };
+		st[0] = chk[0]; st[1] = chk[1]; st[2] = ' '; st[3] = '\0';
+		ui->input->insertPlainText(st);
 
 		if (i % 16 == 15)
 			ui->input->insertPlainText("\n");
 	}
 
-	s = ui->input->document()->toPlainText().toLocal8Bit();
-	fout << s << endl<<endl;
+//	s = ui->input->document()->toPlainText().toLocal8Bit();
+//	fout << s << endl<<endl;
 
 	ui->pushButton_checkSum->setEnabled(false);
 	ui->pushButton_parser->setEnabled(true);
@@ -3578,7 +3589,7 @@ void widget6::on_pushButton_openBIN_clicked() {
 	ifstream fin(name, std::ios::binary);
 
 	unsigned char szBuf[8192] = { 0 };
-	fin.read((char*)&szBuf, sizeof(char) * 8192);
+	fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
 
 	for (int i = 0; i < 8192; i++) {
 		getHex(szBuf[i]);
