@@ -737,7 +737,7 @@ void Delay(DWORD delayTime)
 void widget6::DisplayOutput() {
 
 	ui->output->clear();
-	ui->output->setFontPointSize(8);
+	ui->output->setFontPointSize(9);
 	ifstream in(".\\MemoryParseData.txt");
 	ostringstream outStr;
 	outStr << in.rdbuf();
@@ -3521,13 +3521,7 @@ void widget6::on_pushButton_parser_clicked()
 	fout << "-------- Data End-------" << endl;
 
 	DisplayOutput();
-	/*ifstream in(".\\MemoryParseData.txt");
-	ostringstream outStr;
-	outStr << in.rdbuf();
-	string outContent = outStr.str();
-	ui->output->insertPlainText(outContent.c_str());*/
 
-	//}
 	fout << endl;
 	fout.close();
 	ui->pushButton_parser->setEnabled(false);
@@ -3540,7 +3534,7 @@ void widget6::on_pushButton_parser_clicked()
 void widget6::display_EEP() {
 
 	ui->input->clear();
-	ui->input->setFontPointSize(8);
+	ui->input->setFontPointSize(9);
 	for (int i = 0; i < EEP_Size; i++) {
 
 		if (i % 16 == 0) {		
@@ -3585,13 +3579,30 @@ void widget6::on_pushButton_openBIN_clicked() {
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open Bin"), "", tr("BIN File(*.bin)"));
 	QTextCodec *code = QTextCodec::codecForName("gb18030");
 	std::string name = code->fromUnicode(filename).data();
+	
+	if(modelSelect==3)
+		EEP_Size=16384;
 
 	ifstream fin(name, std::ios::binary);
 
-	unsigned char szBuf[8192] = { 0 };
+	unsigned char szBuf[16384] = { 0 };
 	fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
 
-	for (int i = 0; i < 8192; i++) {
+	for (int i = 0; i < EEP_Size; i++) {
+		
+		if (i % 16 == 0) {		
+			unsigned char a = i / 256;
+			getHex(a);
+			string s = chk;
+			s[2] =  '\0';
+			ui->input->insertPlainText(s.c_str());
+			unsigned char b = i % 256;
+			getHex(b);
+			char st[5] = {0};
+			st[0] = chk[0]; st[1] = chk[1]; st[2] = ':'; st[3] = ' ';
+			ui->input->insertPlainText(st);
+		}
+			
 		getHex(szBuf[i]);
 		string s = chk;
 		s += ' ';
@@ -3609,8 +3620,11 @@ void widget6::on_pushButton_saveBIN_clicked() {
 
 	src = ui->input->document()->toPlainText().toLocal8Bit();
 	int now = 0, e = 0, len = src.length() - 1;
+	
+	if(modelSelect==3)
+		EEP_Size=16384;
 
-	while (now < len && e < 8192) {
+	while (now < len && e < EEP_Size) {
 		if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
 			((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
 				|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	'))) {
@@ -3628,10 +3642,10 @@ void widget6::on_pushButton_saveBIN_clicked() {
 
 	std::ofstream fout("dump_eeprom.bin", std::ios::binary);
 
-	for (int i = 0; i < 8192; i++) {
+	for (int i = 0; i < EEP_Size; i++) {
 		fout.write((char*)&DecData[i], sizeof(char));
-
 	}
+	
 	fout.close();
 	ui->log->insertPlainText("dump_eeprom.bin saved. \n");
 }
