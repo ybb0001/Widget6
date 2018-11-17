@@ -36,6 +36,9 @@
     <ClCompile Include="Widget6.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="oppo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Widget6.h">

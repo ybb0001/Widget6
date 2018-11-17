@@ -119,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="oppo.cpp" />
     <ClCompile Include="Widget6.cpp" />
   </ItemGroup>
   <ItemGroup>
