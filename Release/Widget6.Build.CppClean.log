@@ -1,6 +1,9 @@
-g:\visual studio 2015\projects\widget6\widget6\release\qrc_widget6.obj
-g:\visual studio 2015\projects\widget6\widget6\release\moc_widget6.obj
 g:\visual studio 2015\projects\widget6\widget6\release\main.obj
+g:\visual studio 2015\projects\widget6\widget6\release\widget6.obj
+g:\visual studio 2015\projects\widget6\widget6\release\moc_widget6.obj
+g:\visual studio 2015\projects\widget6\widget6\release\oppo.obj
+g:\visual studio 2015\projects\widget6\widget6\release\qrc_widget6.obj
+g:\visual studio 2015\projects\widget6\win32\release\widget6.exe
 g:\visual studio 2015\projects\widget6\widget6\.\generatedfiles\release\moc_widget6.cpp
 g:\visual studio 2015\projects\widget6\widget6\.\generatedfiles\qrc_widget6.cpp
 g:\visual studio 2015\projects\widget6\widget6\.\generatedfiles\ui_widget6.h
@@ -10,6 +13,9 @@ g:\visual studio 2015\projects\widget6\widget6\generatedfiles\ui_widget6.h
 g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\cl.command.1.tlog
 g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\cl.read.1.tlog
 g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\cl.write.1.tlog
+g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\link.command.1.tlog
+g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\link.read.1.tlog
+g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\link.write.1.tlog
 g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\qtmoc.read.1u.tlog
 g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\qtmoc.write.1u.tlog
 g:\visual studio 2015\projects\widget6\widget6\release\widget6.tlog\qtrcc.read.1u.tlog
