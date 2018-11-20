@@ -1145,7 +1145,7 @@ void widget6::on_pushButton_GPIO_All_clicked() {
 
 void int_Out(int e,bool HL) {
 	
-	int tmp = 0;
+	unsigned int tmp = 0;
 	int* fp = (int*)&tmp;
 
 	if (HL) {
@@ -1156,6 +1156,27 @@ void int_Out(int e,bool HL) {
 	}
 	else {
 		for (int i = 3; i >= 0; i--) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+	}
+	fout << *fp << endl;
+}
+
+
+void short_Out(int e, bool HL) {
+
+	unsigned short tmp = 0;
+	short* fp = (short*)&tmp;
+
+	if (HL) {
+		for (int i = 0; i <2; i++) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+	}
+	else {
+		for (int i = 1; i >= 0; i--) {
 			tmp *= 256;
 			tmp += DecData[e + i];
 		}
@@ -1871,64 +1892,7 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 }
 
 
-void BasicInfo_Parse(int S) {
-	int e = S;
-	if (modelSelect == 1) {
-
-		fout << "Module ID:	0x" << D[e + 1][0] << D[e + 1][1] << "	/SEMCO = 0x08" << endl;
-		fout << "Sensor ID:	0x" << D[e + 3][0] << D[e + 3][1] << D[e + 4][0] << D[e + 4][1] << "	/IMX363=0x0363" << endl;
-		fout << "IR filter ID:	0x" << D[e + 5][0] << D[e + 5][1] << "	/Blue Glass = 0x00, Film = 0x01" << endl;
-		fout << "Lens ID:	0x" << D[e + 6][0] << D[e + 6][1] << "	/SEMCO Lens= 0x09" << endl;
-		fout << "VCM ID:	0x" << D[e + 7][0] << D[e + 7][1] << "	/SEMCo OIS= 0x10" << endl;
-		fout << "Gyro in Module:	0x" << D[e + 8][0] << D[e + 8][1] << "	/Gyro in the module = 0x01, Gyro not in the module = 0xFF" << endl;
-		fout << "Driver IC ID:	0x" << D[e + 9][0] << D[e + 9][1] << "	/ONSEMI LC898217= 0X02" << endl;
-		fout << "AP ID:	0x" << D[e + 10][0] << D[e + 10][1] << "	/MTK : 0x01, QCT : 0x02" << endl;
-		fout << "VCM Hall sensor:	0x" << D[e + 11][0] << D[e + 11][1] << "	/Nanos hall sensor =  0x11, AKM hall sensor =  0x22" << endl;
-
-
-		// Sensor Fuse ID
-		fout << "Sensor Fuse ID:	";
-		for (int i = 0; i < 9; i++) {
-			fout << D[e + 0x0D + i][0] << D[e + 0x0D + i][1];
-		}
-		fout << endl;
-
-		// version info
-		fout << "AA type:	0x" << D[e + 0x1A][0] << D[e + 0x1A][1] << "	/Non-AA/AA type indicates Non-AA model or AA model. Non-AA=0x00, AA=0x01" << endl;
-		fout << "FPC/PCB Version:	0x" << D[e + 0x1B][0] << D[e + 0x1B][1] << endl;
-		fout << "OIS Housing Version:	0x" << D[e + 0x1C][0] << D[e + 0x1C][1] << endl;
-		fout << "AWB calibration Version:	0x" << D[e + 0x1D][0] << D[e + 0x1D][1] << endl;
-		fout << "LSC calibration Version:	0x" << D[e + 0x1E][0] << D[e + 0x1E][1] << endl;
-		fout << "PDAF calibration Version:	0x" << D[e + 0x1F][0] << D[e + 0x1F][1] << endl;
-		fout << "Production Factory:	0x" << D[e + 0x24][0] << D[e + 0x24][1] << "	/HQ = 0x01, STEM=0x10" << endl;
-		fout << "Production Date:	";
-		for (int i = 0; i < 5; i++) {
-			fout << D[e + 0x25 + i][0] << D[e + 0x25 + i][1];
-			if (i < 2)
-				fout << "-";
-			if (i == 3)
-				fout << ":";
-			if (i == 2)
-				fout << " ";
-		}
-		fout << endl;
-	}
-
-	if (modelSelect == 2 || modelSelect == 3) {
-		fout << "Vender ID:	0x" << D[e][0] << D[e][1] << "	/SEMCO = 0x03" << endl;
-		e += 6;
-		fout << "Sensor ID:	0x" << D[e][0] << D[e][1] << "	/0x6A, Mean S5K3M5" << endl;
-		e += 2;
-		fout << "Lens ID:	0x" << D[e][0] << D[e][1] << "	/0x2B, Mean SEMCO Lens 133LOH" << endl;
-		e += 2;
-		fout << "VCM ID:	0x" << D[e][0] << D[e][1] << "	/0x4B, SEMCO Lens VCM SO3600" << endl;
-	}
-
-}
-
-
-
-void basicInfo_Parse(int S) {
+void basicInfo_Parse(int S,int E) {
 
 	int e = S;
 	if ( modelSelect == 1) {
@@ -1989,6 +1953,655 @@ void basicInfo_Parse(int S) {
 }
 
 
+void date_Parse(int S, int E) {
+
+	fout << "Production Date:	";
+	int e = S;
+
+	if (modelSelect < 3) {
+		fout << (int)DecData[e] << '-' << (int)DecData[e + 1] << '-' << (int)DecData[e + 2];
+		e += 3;
+		if (e < E) {
+			fout << '	' << (int)DecData[e] << ':' << (int)DecData[e + 1];
+		}
+	}
+
+	if (modelSelect >= 3 && modelSelect <= 4) {
+		fout << (int)DecData[e + 3] << (int)DecData[e + 2] << '-' << (int)DecData[e + 1] << '-' << (int)DecData[e];
+	}
+	fout << endl;
+
+}
+
+
+void QR_Parse(int S, int E) {
+	int e = S + 1;
+	int qrl = 12;
+	if (modelSelect == 3) {
+		e--;
+		qrl = 17;
+	}
+	fout << "QR Code:	";
+	for (int i = 0; i < qrl; i++) {
+		if ((char)DecData[e + i] != 0)
+			fout << (char)DecData[e + i];
+	}
+	fout << endl;
+}
+
+
+void OIS_Hall_Parse(int S, int E) {
+	
+	fout << "-------OIS Hall Cal------" << endl;
+	int e = hallStart; unsigned int tmp = 0;
+
+	if (modelSelect != 3 && modelSelect != 4) {
+		fout << "Hall Offset X:	" << hex2Dec(e + 1) * 256 + hex2Dec(e + 2) << endl;
+		fout << "Hall Offset Y:	" << hex2Dec(e + 3) * 256 + hex2Dec(e + 4) << endl;
+		fout << "Hall Center X:	" << hex2Dec(e + 5) * 256 + hex2Dec(e + 6) << endl;
+		fout << "Hall Center Y:	" << hex2Dec(e + 7) * 256 + hex2Dec(e + 8) << endl;
+		fout << "Hall Bias X:	" << hex2Dec(e + 9) << endl;
+		fout << "Hall Bias Y:	" << hex2Dec(e + 0x0A) << endl;
+
+		e = e + 0x0B;
+		if (e < oisFW) {
+			fout << "Hall Gain X:	" << hex2Dec(e) << endl;
+			e++;
+			fout << "Hall Gain Y:	" << hex2Dec(e) << endl;
+			e++;
+			fout << "Hall Max X:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
+			e += 2;
+			fout << "Hall Max Y:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
+			e += 2;
+			fout << "Hall Min X:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
+			e += 2;
+			fout << "Hall Min Y:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
+		}
+
+		fout << "OIS Firmware Bin version:	";
+		e = oisFW;
+		tmp = 0;
+		for (int i = 0; i < 4; i++) {
+			tmp *= 256;
+			tmp += hex2Dec(e + i);
+			fout << D[e + i][0] << D[e + i][1];
+		}
+		fout << endl;
+		fout << "OIS Firmware DEC version:	" << tmp << endl;
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		fout << "OIS Driver IC:	0x" << D[e][0] << D[e][1] << endl;
+		e = e + 2;
+		tmp = 0;
+		for (int i = 3; i >= 0; i--) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+		//	float* fp = (float*)&tmp;
+		fout << "OIS Hall X max Before:	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall X min Before:	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall X max After:	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall X min After:	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "OIS Hall Y max Before:	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Y min Before:	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Y max After:	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Y min After:	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "OIS Hall Bias X :	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Offset X :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "OIS Hall Bias Y :	";
+		int_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Offset Y :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Loop Gain X :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Loop Gain Y :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Neutral Center X :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Neutral Center Y :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Offset X :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Offset Y :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Gain X :	";
+		int_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Gain Y :	";
+		int_Out(e, false);
+		e = e + 4;
+	}
+	fout << endl;
+}
+
+
+void drift_Parse(int S, int E) {
+	//AF Drift Compensation Data:
+	fout << "--------AF Drift Compensation Data-------" << endl;
+	int e = S;
+
+	if (modelSelect != 3 && modelSelect != 4) {
+
+		for (int i = 0; i < 9; i++) {
+			fout << "X_Position_" << to_string(i) << ":	";
+			short_Out(e, false);
+			e += 2;
+		}
+		fout << endl;
+		for (int i = 0; i < 9; i++) {
+			fout << "Y_Position_" << to_string(i) << ":	";
+			short_Out(e, false);
+			e += 2;
+		}
+	}
+
+	///////////////~~~~~~~~~~~~~~~~OPPO Guide~~~~~~~~~~~~~~~~~~
+	if (modelSelect == 3 || modelSelect == 4) {
+
+		for (int i = 0; i < 9; i++) {
+			fout << "X_Position_" << to_string(i) << ":	";
+			int_Out(e, false);
+			e += 4;
+		}
+		fout << endl;
+		for (int i = 0; i < 9; i++) {
+			fout << "Y_Position_" << to_string(i) << ":	";
+			int_Out(e, false);
+			e += 4;
+		}
+	}
+	fout << endl;
+}
+
+
+void af_Parse(int S, int E) {
+
+	fout << "-------AF CAL Data------" << endl;
+	int e = S;
+	if (modelSelect != 3 && modelSelect != 4) {
+		fout << "~~~ Face Forward AF ~~~" << endl;
+		if (modelSelect == 2) {
+			fout << "LIN MIN:	" << (hex2Dec(e + 3) & 0x0F) * 256 + hex2Dec(e + 4) << endl;
+			fout << "LIN MAX:	" << (hex2Dec(e + 5) & 0x0F) * 256 + hex2Dec(e + 6) << endl;
+		}
+
+		fout << "AF Inf Position:	" << (hex2Dec(e + 9) & 0x03) * 256 + hex2Dec(e + 0xA) << endl;
+		fout << "AF Mac Position:	" << (hex2Dec(e + 0xB) & 0x03) * 256 + hex2Dec(e + 0xC) << endl;
+		// Sensor Thermal Data
+
+		int tmp = hex2Dec(e + 0x13);
+		if (tmp > 129 && tmp < 236)
+			tmp = -20;
+		else if (tmp >= 236)
+			tmp = 256 - tmp;
+		fout << "Sensor thermal(Inf):	" << tmp << endl;
+
+		tmp = hex2Dec(e + 0x14);
+		if (tmp > 129 && tmp < 236)
+			tmp = -20;
+		else if (tmp >= 236)
+			tmp = 256 - tmp;
+		fout << "Sensor thermal(Mac):	" << tmp << endl;
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		fout << "AF Start DAC:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e = e + 2;
+		fout << "AF MAC DAC:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e = e + 2;
+		fout << "AF INF DAC:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+
+		fout << "~~~ AF Hall, 0x13, LC898217  ~~~" << endl;
+		e = AFhallStart;
+		fout << "AF Driver IC:	0x" << D[e][0] << D[e][1] << endl;
+		e = e + 2;
+		fout << "AF Hall Max:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e = e + 2;
+		fout << "AF Hall Min:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e = e + 1;
+		fout << "AF Hall_Offset:	" << DecData[e] << endl;
+		e = e + 1;
+		fout << "AF Hall_BIAS:	" << DecData[e] << endl;
+	}
+
+}
+
+
+void awb_Parse(int S, int E){
+	fout << "-------AWB CAL Data------" << endl;
+	int e = awbStart + 1;
+	if (modelSelect < 3 || modelSelect>4) {
+		fout << "~~~5100K AWB Cal Data:" << endl;
+		fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+		fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
+		fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
+		fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
+		fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
+		fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
+
+		fout << "~~~4000K AWB Cal Data:" << endl;
+		fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
+		fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
+		fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
+		fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
+		fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
+		fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
+
+		e = e + 0x18;
+		fout << "~~~3100K AWB Cal Data:" << endl;
+		fout << "Gain R/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+		e = e + 2;
+		fout << "Gain B/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+		e = e + 2;
+		fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		//extern void Oppo_AWB(int s, int e, ofstream *f);
+		e = awbStart+E;
+		fout << "~~~5100K AWB Cal Data:" << endl;
+		fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+
+		e = awbStart4000+E;
+		fout << "~~~4000K AWB Cal Data:" << endl;
+		fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+
+		e = awbStart3100+E;
+		fout << "~~~3100K AWB Cal Data:" << endl;
+		fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+
+		e = awbLightStart+E;
+		fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "5100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = awbLightStart4000+E;
+		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = awbLightStart3100+E;
+		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		e = e + 2;
+		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+	}
+
+}
+
+
+void lsc_Parse(int S, int E) {
+
+	fout << "-------LSC CAL Data------" << endl;
+	if (modelSelect != 3 && modelSelect != 4) {
+		int e = S + 1;
+		fout << "Horizontal Lens Correction Size:	" << (int)DecData[e] << endl;
+		fout << "Vertical Lens Correction Size:	" << (int)DecData[e + 1] << endl;
+		e = e + 2;
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				for (int k = 0; k < 4; k++) {
+					LSC[i][j][k] = DecData[e + k];
+					LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
+				}
+				e += 5;
+			}
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		int e = S;
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				for (int k = 0; k < 4; k++) {
+					LSC[i][j][k] = DecData[e + k];
+					LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
+				}
+				e += 5;
+				if ((i * 17 + j + 1) % 51 == 0) {
+					e++;
+				}
+			}
+	}
+
+	fout << "~~~Red Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][0] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Gr Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][1] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Gb Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][2] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Blue Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][3] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+}
+
+
+void gain_Map_Parse(int S, int E) {
+
+	fout << "-------PDAF CAL Data------" << endl;
+
+	if (modelSelect != 3 && modelSelect != 4) {
+		int e = S + 1;
+		fout << "PDAF Version:	" << DecData[e + 0] * 256 + DecData[e + 1] << endl;
+		fout << "Gain map Width:	" << DecData[e + 2] * 256 + DecData[e + 3] << endl;
+		fout << "Gain map Height:	" << DecData[e + 4] * 256 + DecData[e + 5] << endl;
+
+		e = e + 6;
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				PDgainLeft[i][j] = 256 * DecData[e] + DecData[e + 1];
+				e += 2;
+			}
+
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				PDgainRight[i][j] = 256 * DecData[e] + DecData[e + 1];
+				e += 2;
+			}
+
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		int e = S;
+		fout << "PDAF Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
+		fout << "Gain map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
+		fout << "Gain map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
+		e = e + 6;
+
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+				e += 2;
+			}
+
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				PDgainRight[i][j] = DecData[e] + DecData[e + 1] * 256;
+				e += 2;
+			}
+	}
+
+	fout << "~~~Left Gain map:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << PDgainLeft[i][j] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Right Gain map:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << PDgainRight[i][j] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+}
+
+
+void DCC_Parse(int S, int E) {
+	fout << "~~~DCC Data map:" << endl;
+	int e = S;
+	if (modelSelect != 3 && modelSelect != 4) {
+
+		if (E > 0)
+			e = DCCStart + 1;
+		fout << "DCC QC Version:	" << DecData[e + 0] * 256 + DecData[e + 1] << endl;
+		fout << "DCC map Width:	" << DecData[e + 2] * 256 + DecData[e + 3] << endl;
+		fout << "DCC map Height:	" << DecData[e + 4] * 256 + DecData[e + 5] << endl;
+
+		//DCC Data map:
+		e = e + 6;
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 8; j++) {
+				DCC[i][j] = 256 * DecData[e] + DecData[e + 1];
+				e += 2;
+			}
+		}
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		fout << "DCC QC Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
+		fout << "DCC map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
+		fout << "DCC map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
+
+		//DCC Data map:
+		e = e + 6;
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 8; j++) {
+				DCC[i][j] = DecData[e] + 256 * DecData[e + 1];
+				e += 2;
+			}
+		}
+	}
+
+	fout << endl;
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 8; j++) {
+			fout << DCC[i][j] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+}
+
+
+void sony_LRC_Parse(int S, int E) {
+
+	fout << "~~~Sony LRC Data map:" << endl;
+	int e = S;
+	for (int i = 0; i < 12; i++)
+		for (int j = 0; j < 16; j++) {
+			LRC[i][j][0] = DecData[e];
+			e++;
+		}
+
+	for (int i = 0; i < 12; i++)
+		for (int j = 0; j < 16; j++) {
+			LRC[i][j][1] = DecData[e];
+			e++;
+		}
+
+	fout << endl;
+	for (int i = 0; i < 12; i++) {
+		for (int j = 0; j < 16; j++) {
+			fout << LRC[i][j][0] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+	for (int i = 0; i < 12; i++) {
+		for (int j = 0; j < 16; j++) {
+			fout << LRC[i][j][1] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+}
+
+
+void sony_DCC_Parse(int S, int E) {
+
+	fout << "~~~Sony DCC Data map:" << endl;
+	int e = S;
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 8; j++) {
+			DCC_Sony[i][j] = DecData[e] + 256 * DecData[e + 1];
+			e += 2;
+		}
+	}
+
+	fout << endl;
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 8; j++) {
+			fout << DCC_Sony[i][j] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+}
+
+
+void dual_Cal_Parse(int S, int E) {
+
+	unsigned int Dou[2] = { 0,0 };
+	double* dp = (double*)Dou;
+	int e = S;
+	if(modelSelect!=3&& modelSelect != 4)
+		S++;
+
+	for (int p = 0; p < 2; p++) {
+		for (int i = 0; i < 4; i++) {
+			Dou[p] *= 256;
+			Dou[p] += DecData[e + i];
+		}
+		e += 4;
+	}
+
+	fout << "Pan:	" << *dp << endl;
+
+	for (int p = 0; p < 2; p++) {
+		Dou[p] = 0;
+		for (int i = 0; i < 4; i++) {
+			Dou[p] *= 256;
+			Dou[p] += DecData[e + i];
+		}
+		e += 4;
+	}
+
+	fout << "Roll:	" << *dp << endl;
+
+	for (int p = 0; p < 2; p++) {
+		Dou[p] = 0;
+		for (int i = 0; i < 4; i++) {
+			Dou[p] *= 256;
+			Dou[p] += DecData[e + i];
+		}
+		e += 4;
+	}
+
+	fout << "Tilt:	" << *dp << endl;
+	if (modelSelect != 3 && modelSelect != 4)
+		fout << "AF_calibration_code(65cm):	" << 256 * DecData[e] + DecData[e + 1] << endl;
+
+}
 
 
 
@@ -2161,65 +2774,12 @@ void widget6::on_pushButton_parser_clicked()
 
 		fout << "-------basic info------" << endl;
 
-		if (infoEnd > 0&& modelSelect == 1) {
-
-			e = infoStart;
-
-			fout << "Module ID:	0x" << D[e + 1][0] << D[e + 1][1] << "	/SEMCO = 0x08" << endl;
-			fout << "Sensor ID:	0x" << D[e + 3][0] << D[e + 3][1] << D[e + 4][0] << D[e + 4][1] << "	/IMX363=0x0363" << endl;
-			fout << "IR filter ID:	0x" << D[e + 5][0] << D[e + 5][1] << "	/Blue Glass = 0x00, Film = 0x01" << endl;
-			fout << "Lens ID:	0x" << D[e + 6][0] << D[e + 6][1] << "	/SEMCO Lens= 0x09" << endl;
-			fout << "VCM ID:	0x" << D[e + 7][0] << D[e + 7][1] << "	/SEMCo OIS= 0x10" << endl;
-			fout << "Gyro in Module:	0x" << D[e + 8][0] << D[e + 8][1] << "	/Gyro in the module = 0x01, Gyro not in the module = 0xFF" << endl;
-			fout << "Driver IC ID:	0x" << D[e + 9][0] << D[e + 9][1] << "	/ONSEMI LC898217= 0X02" << endl;
-			fout << "AP ID:	0x" << D[e + 10][0] << D[e + 10][1] << "	/MTK : 0x01, QCT : 0x02" << endl;
-			fout << "VCM Hall sensor:	0x" << D[e + 11][0] << D[e + 11][1] << "	/Nanos hall sensor =  0x11, AKM hall sensor =  0x22" << endl;
-
-
-			// Sensor Fuse ID
-			fout << "Sensor Fuse ID:	";
-			for (int i = 0; i < 9; i++) {
-				fout << D[e + 0x0D + i][0] << D[e + 0x0D + i][1];
-			}
-			fout << endl;
-
-			// version info
-			fout << "AA type:	0x" << D[e + 0x1A][0] << D[e + 0x1A][1] << "	/Non-AA/AA type indicates Non-AA model or AA model. Non-AA=0x00, AA=0x01" << endl;
-			fout << "FPC/PCB Version:	0x" << D[e + 0x1B][0] << D[e + 0x1B][1] << endl;
-			fout << "OIS Housing Version:	0x" << D[e + 0x1C][0] << D[e + 0x1C][1] << endl;
-			fout << "AWB calibration Version:	0x" << D[e + 0x1D][0] << D[e + 0x1D][1] << endl;
-			fout << "LSC calibration Version:	0x" << D[e + 0x1E][0] << D[e + 0x1E][1] << endl;
-			fout << "PDAF calibration Version:	0x" << D[e + 0x1F][0] << D[e + 0x1F][1] << endl;
-			fout << "Production Factory:	0x" << D[e + 0x24][0] << D[e + 0x24][1] << "	/HQ = 0x01, STEM=0x10" << endl;
-			fout << "Production Date:	";
-			for (int i = 0; i < 5; i++) {
-				fout << D[e + 0x25 + i][0] << D[e + 0x25 + i][1];
-				if (i < 2)
-					fout << "-";
-				if (i == 3)
-					fout << ":";
-				if (i == 2)
-					fout << " ";
-			}
-			fout << endl;
+		if (infoEnd > 0) {
+			basicInfo_Parse(infoStart, infoEnd);
 		}
 
 		if (productDateStart > 0) {
-			fout << "Production Date:	";
-			e = productDateStart;
-
-			if (modelSelect < 3) {
-				fout << (int)DecData[e] << '-' << (int)DecData[e + 1] << '-' << (int)DecData[e + 2];
-				e += 3;
-				if (e < productDateEnd) {
-
-					fout << '	' << (int)DecData[e] << ':' << (int)DecData[e + 1];
-				}
-			}
-			if (modelSelect >= 3&& modelSelect<=4) {
-				fout << (int)DecData[e+3]<< (int)DecData[e + 2] << '-' << (int)DecData[e + 1] << '-' << (int)DecData[e];
-			}
-			fout << endl;
+			date_Parse(productDateStart,productDateEnd);
 		}
 
 		if (fuseIDEnd > 0) {
@@ -2232,662 +2792,36 @@ void widget6::on_pushButton_parser_clicked()
 		}
 
 		if (serialNumberStart > 0) {
-			e = serialNumberStart + 1;
-			int qrl = 12;
-			if (modelSelect ==	3) {
-				e--;
-				qrl = 17;
-			}
-			fout << "QR Code:	";
-			for (int i = 0; i < qrl; i++) {
-				if((char)DecData[e + i]!=0)
-					fout << (char)DecData[e + i];
-			}
-			fout << endl;
+			QR_Parse(serialNumberStart,serialNumberEnd);
 		}
 
 		if (hallStart > 0) {
-
-			fout << "-------OIS Hall Cal------" << endl;
-			e = hallStart;
-
-			if (modelSelect != 3 && modelSelect != 4) {
-				fout << "Hall Offset X:	" << hex2Dec(e + 1) * 256 + hex2Dec(e + 2) << endl;
-				fout << "Hall Offset Y:	" << hex2Dec(e + 3) * 256 + hex2Dec(e + 4) << endl;
-				fout << "Hall Center X:	" << hex2Dec(e + 5) * 256 + hex2Dec(e + 6) << endl;
-				fout << "Hall Center Y:	" << hex2Dec(e + 7) * 256 + hex2Dec(e + 8) << endl;
-				fout << "Hall Bias X:	" << hex2Dec(e + 9) << endl;
-				fout << "Hall Bias Y:	" << hex2Dec(e + 0x0A) << endl;
-
-				e = e + 0x0B;
-				if (e < oisFW) {
-					fout << "Hall Gain X:	" << hex2Dec(e) << endl;
-					e++;
-					fout << "Hall Gain Y:	" << hex2Dec(e) << endl;
-					e++;
-					fout << "Hall Max X:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
-					e += 2;
-					fout << "Hall Max Y:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
-					e += 2;
-					fout << "Hall Min X:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
-					e += 2;
-					fout << "Hall Min Y:	" << hex2Dec(e) * 256 + hex2Dec(e + 1) << endl;
-				}
-
-
-				fout << "OIS Firmware Bin version:	";
-				e = oisFW;
-				tmp = 0;
-				for (int i = 0; i < 4; i++) {
-					tmp *= 256;
-					tmp += hex2Dec(e + i);
-					fout << D[e + i][0] << D[e + i][1];
-				}
-				fout << endl;
-				fout << "OIS Firmware DEC version:	" << tmp << endl;
-			}
-
-			if (modelSelect == 3 || modelSelect == 4) {
-				fout << "OIS Driver IC:	0x" << D[e][0] << D[e][1] << endl;
-				e = e + 2;
-				tmp = 0;
-				for (int i = 3; i >=0; i--) {
-					tmp *= 256;
-					tmp += DecData[e + i];
-				}
-				//	float* fp = (float*)&tmp;
-				fout << "OIS Hall X max Before:	" ;
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall X min Before:	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall X max After:	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall X min After:	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "OIS Hall Y max Before:	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall Y min Before:	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall Y max After:	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall Y min After:	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "OIS Hall Bias X :	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall Offset X :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "OIS Hall Bias Y :	";
-				int_Out(e, false);
-				e = e + 4;
-				fout << "OIS Hall Offset Y :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Loop Gain X :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Loop Gain Y :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Neutral Center X :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Neutral Center Y :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Gyro Offset X :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Gyro Offset Y :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Gyro Gain X :	";
-				int_Out(e, false);
-				e = e + 4;
-
-				fout << "Gyro Gain Y :	";
-				int_Out(e, false);
-				e = e + 4;
-
-
-			}
-
+			OIS_Hall_Parse(hallStart, hallEnd);
 		}
 
 		if (afDriftStart > 0) {
-			//AF Drift Compensation Data:
-			fout << "--------AF Drift Compensation Data-------" << endl;
-			e = afDriftStart;
-
-			if (modelSelect != 3 && modelSelect != 4) {
-				int aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_0:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_1:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_2:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_3:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_4:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_5:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_6:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_7:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "X_Position_8:	" << aftmp << endl;
-				e += 2;
-
-				fout << endl;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_0:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_1:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					if (aftmp >= 0x8000)
-						aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_2:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_3:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_4:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_5:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_6:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_7:	" << aftmp << endl;
-				e += 2;
-
-				aftmp = 256 * DecData[e] + DecData[e + 1];
-				if (aftmp >= 0x8000)
-					aftmp = aftmp - 0x10000;
-
-				fout << "Y_Position_8:	" << aftmp << endl;
-				e += 2;
-			}
-
-///////////////~~~~~~~~~~~~~~~~OPPO Guide~~~~~~~~~~~~~~~~~~
-			if (modelSelect == 3 || modelSelect == 4) {
-				
-				for (int i = 0; i < 9; i++) {
-					fout << "X_Position_" << to_string(i)<<":	";
-					int_Out(e, false);
-					e += 4;
-				}
-				for (int i = 0; i < 9; i++) {
-					fout << "Y_Position_" << to_string(i) << ":	";
-					int_Out(e, false);
-					e += 4;
-				}
-
-			}
-
-
+			drift_Parse(afDriftStart,afDriftEnd);
 		}
 
 		if (afStart > 0) {
-			fout << "-------AF CAL Data------" << endl;
-			e = afStart;
-
-			if (modelSelect != 3&& modelSelect != 4) {
-				fout << "~~~ Face Forward AF ~~~" << endl;
-				if (modelSelect == 2) {
-					fout << "LIN MIN:	" << (hex2Dec(e + 3) & 0x0F) * 256 + hex2Dec(e + 4) << endl;
-					fout << "LIN MAX:	" << (hex2Dec(e + 5) & 0x0F) * 256 + hex2Dec(e + 6) << endl;
-				}
-
-				fout << "AF Inf Position:	" << (hex2Dec(e + 9) & 0x03) * 256 + hex2Dec(e + 0xA) << endl;
-				fout << "AF Mac Position:	" << (hex2Dec(e + 0xB) & 0x03) * 256 + hex2Dec(e + 0xC) << endl;
-				// Sensor Thermal Data
-
-				tmp = hex2Dec(e + 0x13);
-				if (tmp > 129 && tmp < 236)
-					tmp = -20;
-				else if (tmp >= 236)
-					tmp = 256 - tmp;
-				fout << "Sensor thermal(Inf):	" << tmp << endl;
-
-				tmp = hex2Dec(e + 0x14);
-				if (tmp > 129 && tmp < 236)
-					tmp = -20;
-				else if (tmp >= 236)
-					tmp = 256 - tmp;
-				fout << "Sensor thermal(Mac):	" << tmp << endl;
-			}
-			if (modelSelect == 3 || modelSelect == 4) {
-				fout << "AF Start DAC:	" << DecData[e] + DecData[e+1] * 256 << endl;
-				e = e + 2;
-				fout << "AF MAC DAC:	" << DecData[e] + DecData[e + 1] * 256 << endl;
-				e = e + 2;
-				fout << "AF INF DAC:	" << DecData[e] + DecData[e + 1] * 256 << endl;
-
-				fout << "~~~ AF Hall, 0x13, LC898217  ~~~" << endl;
-				e = AFhallStart;
-				fout << "AF Driver IC:	0x" << D[e][0] << D[e][1] << endl;
-				e = e + 2;
-				fout << "AF Hall Max:	" << DecData[e] + DecData[e + 1] * 256 << endl;
-				e = e + 2;
-				fout << "AF Hall Min:	" << DecData[e] + DecData[e + 1] * 256 << endl;
-				e = e + 1;
-				fout << "AF Hall_Offset:	" << DecData[e] << endl;
-				e = e + 1;
-				fout << "AF Hall_BIAS:	" << DecData[e] << endl;
-			
-			}
-
+			af_Parse(afStart, afEnd);
 		}
-
 ///////////////AWBdata
 		if (awbStart > 0) {
-
-			fout << "-------AWB CAL Data------" << endl;
-			e = awbStart + 1;
-			if (modelSelect < 3 || modelSelect>4){
-				fout << "~~~5100K AWB Cal Data:" << endl;
-				fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
-				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
-				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
-				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
-				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
-
-				fout << "~~~4000K AWB Cal Data:" << endl;
-				fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
-				fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
-				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
-				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
-				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
-				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
-
-				e = e + 0x18;
-				fout << "~~~3100K AWB Cal Data:" << endl;
-				fout << "Gain R/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				e = e + 2;
-				fout << "Gain B/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				e = e + 2;
-				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-			}
-
-			if (modelSelect == 3 || modelSelect==4) {
-				//extern void Oppo_AWB(int s, int e, ofstream *f);
-
-				e = awbStart;
-				fout << "~~~5100K AWB Cal Data:" << endl;
-				fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-
-				e = awbStart4000;
-				fout << "~~~4000K AWB Cal Data:" << endl;
-				fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-
-				e = awbStart3100;
-				fout << "~~~3100K AWB Cal Data:" << endl;
-				fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-
-				e = awbLightStart;
-				fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "5100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = awbLightStart4000;
-				fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = awbLightStart3100;
-				fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-				e = e + 2;
-				fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
-			}
-
+			awb_Parse(awbStart, 0);
 		}
 
 ///////////////LSCdata
 		if (lscStart > 0) {
-
-			fout << "-------LSC CAL Data------" << endl;
-			if (modelSelect != 3 && modelSelect != 4) {
-
-				e = lscStart + 1;
-				fout << "Horizontal Lens Correction Size:	" << (int)DecData[e] << endl;
-				fout << "Vertical Lens Correction Size:	" << (int)DecData[e + 1] << endl;
-				e = e + 2;
-				for (int i = 0; i < 13; i++)
-					for (int j = 0; j < 17; j++) {
-						for (int k = 0; k < 4; k++) {
-							LSC[i][j][k] = DecData[e + k];
-							LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
-						}
-						e += 5;
-					}
-			}
-
-			if (modelSelect == 3 || modelSelect == 4) {
-
-				e = lscStart;
-
-				for (int i = 0; i < 13; i++)
-					for (int j = 0; j < 17; j++) {
-
-					
-						for (int k = 0; k < 4; k++) {
-							LSC[i][j][k] = DecData[e + k];
-							LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
-						}
-						e += 5;
-
-						if ((i * 17 + j+1) % 51 == 0) {
-
-							e++;
-
-						}
-
-					}
-
-			}
-
-				fout << "~~~Red Channel LSC:" << endl;
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
-						fout << LSC[i][j][0] << "	";
-
-					}
-					fout << endl;
-				}
-
-				fout << "~~~Gr Channel LSC:" << endl;
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
-						fout << LSC[i][j][1] << "	";
-
-					}
-					fout << endl;
-				}
-
-				fout << "~~~Gb Channel LSC:" << endl;
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
-						fout << LSC[i][j][2] << "	";
-
-					}
-					fout << endl;
-				}
-
-				fout << "~~~Blue Channel LSC:" << endl;
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
-						fout << LSC[i][j][3] << "	";
-
-					}
-					fout << endl;
-				}
-				fout << endl;
-		
-
-
+			lsc_Parse(lscStart,lscEnd);
 		}
 
 		if (pdafGainStart > 0) {
-
-			fout << "-------PDAF CAL Data------" << endl;
-
-			if (modelSelect != 3 && modelSelect != 4) {
-				e = pdafGainStart + 1;
-				fout << "PDAF Version:	" << DecData[e + 0] * 256 + DecData[e + 1] << endl;
-				fout << "Gain map Width:	" << DecData[e + 2] * 256 + DecData[e + 3] << endl;
-				fout << "Gain map Height:	" << DecData[e + 4] * 256 + DecData[e + 5] << endl;
-
-				e = e + 6;
-				for (int i = 0; i < 13; i++)
-					for (int j = 0; j < 17; j++) {
-						PDgainLeft[i][j] = 256 * DecData[e] + DecData[e + 1];
-						e += 2;
-					}
-
-				for (int i = 0; i < 13; i++)
-					for (int j = 0; j < 17; j++) {
-						PDgainRight[i][j] = 256 * DecData[e] + DecData[e + 1];
-						e += 2;
-					}
-
-			}
-
-			if (modelSelect == 3 || modelSelect == 4) {
-				e = pdafGainStart;
-				fout << "PDAF Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
-				fout << "Gain map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
-				fout << "Gain map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
-				e = e + 6;
-
-				for (int i = 0; i < 13; i++)
-					for (int j = 0; j < 17; j++) {
-						PDgainLeft[i][j] = DecData[e] + DecData[e + 1]*256;
-						e += 2;
-					}
-
-				for (int i = 0; i < 13; i++)
-					for (int j = 0; j < 17; j++) {
-						PDgainRight[i][j] = DecData[e] + DecData[e + 1]*256;
-						e += 2;
-					}
-
-			}
-
-			fout << "~~~Left Gain map:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
-					fout << PDgainLeft[i][j] << "	";
-
-				}
-				fout << endl;
-			}
-
-			fout << "~~~Right Gain map:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
-					fout << PDgainRight[i][j] << "	";
-				}
-				fout << endl;
-			}
-				
-			fout << endl;
+			gain_Map_Parse(pdafGainStart,pdafGainEnd);
 		}
 
 		if (DCCStart > 0) {
-			fout << "~~~DCC Data map:" << endl;
-			e = DCCStart;
-			if (modelSelect != 3 && modelSelect != 4) {
-
-				if (DCCEnd > 0)
-					e = DCCStart + 1;
-				fout << "DCC QC Version:	" << DecData[e + 0] * 256 + DecData[e + 1] << endl;
-				fout << "DCC map Width:	" << DecData[e + 2] * 256 + DecData[e + 3] << endl;
-				fout << "DCC map Height:	" << DecData[e + 4] * 256 + DecData[e + 5] << endl;
-
-				//DCC Data map:
-				e = e + 6;
-				for (int i = 0; i < 6; i++) {
-					for (int j = 0; j < 8; j++) {
-						DCC[i][j] = 256 * DecData[e] + DecData[e + 1];
-						e += 2;
-					}
-				}
-			}
-
-			if (modelSelect == 3 || modelSelect == 4) {
-				fout << "DCC QC Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
-				fout << "DCC map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
-				fout << "DCC map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
-
-				//DCC Data map:
-				e = e + 6;
-				for (int i = 0; i < 6; i++) {
-					for (int j = 0; j < 8; j++) {
-						DCC[i][j] = DecData[e] + 256 * DecData[e + 1];
-						e += 2;
-					}
-				}
-			}
-
-			fout << endl;
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 8; j++) {
-					fout << DCC[i][j] << "	";
-				}
-				fout << endl;
-			}
-			fout << endl;
+			DCC_Parse(DCCStart,DCCEnd);		
 		}
 
 		if (FVStart > 0) {
@@ -2934,57 +2868,40 @@ void widget6::on_pushButton_parser_clicked()
 
 		if ( modelSelect == 3 || modelSelect == 4) {
 			
-			fout << "~~~Sony LRC Data map:" << endl;
-			e = LRCStart;
-			for (int i = 0; i < 12; i++) 
-				for (int j = 0; j < 16; j++) {
-					LRC[i][j][0] = DecData[e];
-					e++;
-				}
+			sony_LRC_Parse(LRCStart,LRCEnd);
+			sony_DCC_Parse(SonyDCCStart,SonyDCCEnd);
+			basicInfo_Parse(infoStart+0x1000, infoEnd + 0x1000);
+			date_Parse(productDateStart + 0x1000, productDateEnd + 0x1000);
+			QR_Parse(serialNumberStart + 0x1000, serialNumberEnd + 0x1000);
+			OIS_Hall_Parse(hallStart + 0x1000, hallEnd + 0x1000);
+			drift_Parse(afDriftStart + 0x1000, afDriftEnd + 0x1000);
+			af_Parse(afStart + 0x1000, afEnd + 0x1000);
+			awb_Parse(awbStart + 0x1000, 0x1000);
+			lsc_Parse(lscStart + 0x1000, lscEnd + 0x1000);
+			gain_Map_Parse(pdafGainStart + 0x1000, pdafGainEnd + 0x1000);
+			DCC_Parse(0x1B06, DCCEnd + 0x1B6F);
 
-			for (int i = 0; i < 12; i++)
-				for (int j = 0; j < 16; j++) {
-					LRC[i][j][1] = DecData[e];
-					e++;
-				}
+			e = AECStart;
 
-			fout << endl;
-			for (int i = 0; i < 12; i++){
-				for (int j = 0; j < 16; j++) {
-					fout << LRC[i][j][0] << "	";
-				}
-				fout << endl;
-			}
-			fout << endl;
-
-			for (int i = 0; i < 12; i++) {
-				for (int j = 0; j < 16; j++) {
-					fout << LRC[i][j][1] << "	";
-				}
-				fout << endl;
-			}
-			fout << endl;
-
-
-			fout << "~~~Sony DCC Data map:" << endl;
-			e = SonyDCCStart;
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 8; j++) {
-					DCC_Sony[i][j] = DecData[e] + 256 * DecData[e + 1];
-					e += 2;
-				}
-			}
-
-			fout << endl;
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 8; j++) {
-					fout << DCC_Sony[i][j] << "	";
-				}
-				fout << endl;
-			}
-			fout << endl;
+			fout << "Wide_length_pixel_1M:	" << hex2Dec(e)  + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Wide_Frame_length_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Tele_length_pixel_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Tele_Frame_length_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Wide_length_pixel_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Wide_Frame_length_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Tele_length_pixel_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
+			fout << "Tele_Frame_length_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			e += 2;
 
 		}
+
 
 
 		if (oisStart1 > 0) {
@@ -3045,47 +2962,21 @@ void widget6::on_pushButton_parser_clicked()
 		double* dp = (double*)Dou;
 		if (dualCalStart > 0) {
 			//Dual Cal Data:
-			fout << "-------Dual CAL Data------" << endl;
-			e = dualCalStart + 1;
+			fout << "-------Dual CAL Data 12------" << endl;
+			dual_Cal_Parse(dualCalStart, dualCalEnd);
+		}
 
-			for (int p = 0; p < 2; p++) {
-				for (int i = 0; i < 4; i++) {
-					Dou[p] *= 256;
-					Dou[p] += DecData[e + i];
-				}
-				e += 4;
-			}
-
-			fout << "Pan:	" << *dp << endl;
-
-			for (int p = 0; p < 2; p++) {
-				Dou[p] = 0;
-				for (int i = 0; i < 4; i++) {
-					Dou[p] *= 256;
-					Dou[p] += DecData[e + i];
-				}
-				e += 4;
-			}
-
-			fout << "Roll:	" << *dp << endl;
-
-			for (int p = 0; p < 2; p++) {
-				Dou[p] = 0;
-				for (int i = 0; i < 4; i++) {
-					Dou[p] *= 256;
-					Dou[p] += DecData[e + i];
-				}
-				e += 4;
-			}
-
-			fout << "Tilt:	" << *dp << endl;
-
-			fout << "AF_calibration_code(65cm):	" << 256 * DecData[e] + DecData[e + 1] << endl;
+		if (modelSelect == 3 || modelSelect == 4) {
+			//Dual Cal Data:
+			fout << "-------Dual CAL Data 12------" << endl;
+			dual_Cal_Parse(dualCalStart+24, dualCalEnd+24);
 		}
 
 		if (dualVerifyStart > 0) {
 			//Dual verify Data:
 			fout << "-------Dual Verify Data------" << endl;
+
+
 			e = dualVerifyStart + 1;
 
 			for (int p = 0; p < 2; p++) {
