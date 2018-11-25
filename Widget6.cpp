@@ -32,19 +32,22 @@ int serialNumberStart = 0x45, serialNumberEnd = 0x65;
 int hallStart = 0x30, hallEnd = 0x3F, AFhallStart = 0x100, AFhallEnd= 0x109;
 int oisFW = 0x85, DualAWBStart = 0x0D40, DualAWBEnd = 0x0D81;
 int afStart = 0x40, afEnd = 0x56;
-int awbStart = 0x5F, awbEnd = 0x85, awbStart3100 = 0, awbEnd3100 = 0,awbStart4000 = 0, awbEnd4000 = 0;
-int awbLightStart = 0x45, awbLightEnd = 0x4E, awbLightStart3100 = 0x61, awbLightEnd3100 = 0x68, awbLightStart4000 = 0x49, awbLightEnd4000 = 0x50;
+int awbStart = 0x5F, awbEnd = 0x85, awbStart3100 = 0x002F, awbEnd3100 = 0x0044,awbStart4000 = 0x0051, awbEnd4000 = 0x0066;
+int awbLightStart = 0x45, awbLightEnd = 0x4E, awbLightStart4000 = 0x61, awbLightEnd4000 = 0x68, awbLightStart3100 = 0x49, awbLightEnd3100 = 0x50;
 int lscStart = 0x8F, lscEnd = 0x04E6;
 int pdafGainStart = 0x04EF, pdafGainEnd = 0x0995;
 int DCCStart = 0x086C, DCCEnd = 0 ,SonyDCCStart = 0x0CCA, SonyDCCEnd = 0x0D2D;
 int FVStart = 0x08D5, PDStart = 0x0935, LRCStart = 0x0AFA, LRCEnd = 0x0D2B;
 int oisStart1 = 0x09A0, oisEnd1 = 0x09B1;
 int oisStart2 = 0x09B4, oisEnd2 = 0x09BD;
+int distortiomStart = 0x0D90, distortiomEnd = 0x0E91;
 
 int DAStart = 0x09C0, DAEnd = 0x09C3;
 int dualCalStart = 0x09D0, dualCalEnd = 0x11EC;
 int dualVerifyStart = 0x11F0, dualVerifyEnd = 0x1209;
 int AECStart = 0x1210, AECEnd = 0x1234;
+int QSCStart = 0x3068, QSCEnd = 0x3969;
+
 int barCodeStart = 0x1240;
 int afDriftStart = 0x12CB, afDriftEnd = 0x12EF;
 int confidenceStart = 0x1300, confidenceEnd = 0x16C0;
@@ -385,6 +388,8 @@ void load_EEPROM_Address() {
 
 	awbStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbStart"), awbStart, CA2CT(EEPROM_Map.c_str()));
 	awbEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbEnd"), awbEnd, CA2CT(EEPROM_Map.c_str()));
+	awbStart4000 = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbStart4"), awbStart, CA2CT(EEPROM_Map.c_str()));
+	awbEnd4000 = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbEnd4"), awbEnd, CA2CT(EEPROM_Map.c_str()));
 
 	lscStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscStart"), lscStart, CA2CT(EEPROM_Map.c_str()));
 	lscEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscEnd"), lscEnd, CA2CT(EEPROM_Map.c_str()));
@@ -478,6 +483,9 @@ void save_EEPROM_Address() {
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbStart"), lptstr2int(awbStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbEnd"), lptstr2int(awbEnd), CA2CT(EEPROM_Map.c_str()));
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbStart4"), lptstr2int(awbStart4000), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbEnd4"), lptstr2int(awbEnd4000), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscStart"), lptstr2int(lscStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscEnd"), lptstr2int(lscEnd), CA2CT(EEPROM_Map.c_str()));
@@ -1880,7 +1888,7 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 			D[checkSumEnd][1] = chk[1];
 
 			strDisplay += '\n';
-			ui->input->insertPlainText(strDisplay);
+			ui->log->insertPlainText(strDisplay);
 		}
 
 		fout << chk[0] << chk[1] << "	";
@@ -1946,7 +1954,7 @@ void basicInfo_Parse(int S,int E) {
 		e += 2;
 		fout << "VCM ID:	0x" << D[e][0] << D[e][1] << "	//S03600=0x4B; S02820=0x4A; SI3612=0x4C" << endl;
 		e += 2;
-		fout << "Module Version:	0x" << D[e][0] << D[e][1] << "	//T0/EVT=0x00;Final=0x0F" << endl;
+		fout << "Module Ver:	0x" << D[e][0] << D[e][1] << "	//T0/EVT=0x00;Final=0x0F" << endl;
 
 	}
 
@@ -2199,16 +2207,16 @@ void af_Parse(int S, int E) {
 		e = e + 2;
 		fout << "AF Hall Min:	" << DecData[e] + DecData[e + 1] * 256 << endl;
 		e = e + 1;
-		fout << "AF Hall_Offset:	" << DecData[e] << endl;
+		fout << "AF Hall_Offset:	" << (int)DecData[e] << endl;
 		e = e + 1;
-		fout << "AF Hall_BIAS:	" << DecData[e] << endl;
+		fout << "AF Hall_BIAS:	" << (int)DecData[e] << endl;
 	}
 
 }
 
 
 void awb_Parse(int S, int E){
-	fout << "-------AWB CAL Data------" << endl;
+
 	int e = awbStart + 1;
 	if (modelSelect < 3 || modelSelect>4) {
 		fout << "~~~5100K AWB Cal Data:" << endl;
@@ -2246,73 +2254,73 @@ void awb_Parse(int S, int E){
 		//extern void Oppo_AWB(int s, int e, ofstream *f);
 		e = awbStart+E;
 		fout << "~~~5100K AWB Cal Data:" << endl;
-		fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Red :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Blue :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
 
 		e = awbStart4000+E;
 		fout << "~~~4000K AWB Cal Data:" << endl;
-		fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Red :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Blue :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
 
 		e = awbStart3100+E;
 		fout << "~~~3100K AWB Cal Data:" << endl;
-		fout << "AWB_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Red :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "AWB_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "AWB_Blue :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
 
 		e = awbLightStart+E;
-		fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "5100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "5100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = awbLightStart4000+E;
-		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = awbLightStart3100+E;
-		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) / 1024 << endl;
+		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 	}
 
 }
@@ -2506,20 +2514,20 @@ void sony_LRC_Parse(int S, int E) {
 	int e = S;
 	for (int i = 0; i < 12; i++)
 		for (int j = 0; j < 16; j++) {
-			LRC[i][j][0] = DecData[e];
+			LRC[0][i][j] = DecData[e];
 			e++;
 		}
 
 	for (int i = 0; i < 12; i++)
 		for (int j = 0; j < 16; j++) {
-			LRC[i][j][1] = DecData[e];
+			LRC[1][i][j] = DecData[e];
 			e++;
 		}
 
 	fout << endl;
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 16; j++) {
-			fout << LRC[i][j][0] << "	";
+			fout << LRC[0][i][j] << "	";
 		}
 		fout << endl;
 	}
@@ -2527,7 +2535,7 @@ void sony_LRC_Parse(int S, int E) {
 
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 16; j++) {
-			fout << LRC[i][j][1] << "	";
+			fout << LRC[1][i][j] << "	";
 		}
 		fout << endl;
 	}
@@ -2599,7 +2607,7 @@ void dual_Cal_Parse(int S, int E) {
 
 	fout << "Tilt:	" << *dp << endl;
 	if (modelSelect != 3 && modelSelect != 4)
-		fout << "AF_calibration_code(65cm):	" << 256 * DecData[e] + DecData[e + 1] << endl;
+		fout << "AF_calibration_code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 
 }
 
@@ -2661,73 +2669,90 @@ void widget6::on_pushButton_parser_clicked()
 		fout << "(ChkSum)	(EEPR)	(Calc.)	(Flag)	" << endl;
 
 		//Calc Total Check Sum
-		if (totalCheckSum > 0) {	
+		if (totalCheckSum > 0) {
 			for (int i = 0; i < totalCheckSum; i++)
-				TCSum += DecData[i];	
+				TCSum += DecData[i];
 		}
 
 		CheckSum_Check(infoStart, infoEnd, 30, 0, "Info");
 		CheckSum_Check(fuseIDStart, fuseIDEnd, 1, 0, "fuseID");
+
 		CheckSum_Check(serialNumberStart, serialNumberEnd, 1, 0, "QRcode");
 
-		if (modelSelect > 2 && modelSelect < 5) {	
-			CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "4000K");
-			CheckSum_Check(awbStart, awbEnd, 6, 0, "3100K");
+		if (modelSelect > 2 && modelSelect < 5) {
+			CheckSum_Check(awbStart4000, awbEnd4000, 5, 0, "4000K");
+			CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "3100K");
 			CheckSum_Check(awbLightStart, awbLightEnd, 5, 0, "Light5");
 			CheckSum_Check(awbLightStart4000, awbLightEnd4000, 3, 0, "Light4");
-			CheckSum_Check(awbLightStart3100, awbLightEnd3100, 2, 0, "Light3");
+			CheckSum_Check(awbLightStart3100, awbLightEnd3100, 3, 0, "Light3");
 			CheckSum_Check(AFhallStart, AFhallEnd, 1, 0, "AFHall");
 		}
 		else {
 			CheckSum_Check(awbStart, awbEnd, 1, 0, "AWBCal");
 		}
 
-		
+
 		CheckSum_Check(hallStart, hallEnd, 1, 0, "OISHall");
 		CheckSum_Check(afDriftStart, afDriftEnd, 1, 0, "Drift");
 		CheckSum_Check(afStart, afEnd, 21, 0, "AFCal");
 		CheckSum_Check(lscStart, lscEnd, 1, 0, "LSCCal");
 		CheckSum_Check(pdafGainStart, pdafGainEnd, 125, 0, "PDAF");
 		CheckSum_Check(DCCStart, DCCEnd, 3, 0, "DCCcal");
-////////////////Sony DCC and Tele/////////////////////////////////////////
+		////////////////Sony DCC and Tele/////////////////////////////////////////
 
 
-		if (modelSelect ==3 ) {
-			CheckSum_Check(LRCStart, LRCEnd, 423, 0, "LRC");
-			CheckSum_Check(infoStart+4096, infoEnd+4096, 30, 0, "Tele_Info");
-			CheckSum_Check(awbStart3100+4096, awbEnd3100+4096, 6, 0, "4000K");
-			CheckSum_Check(awbStart+4096, awbEnd+4096, 6, 0, "3100K");
-			CheckSum_Check(awbLightStart+4096, awbLightEnd+4096, 5, 0, "Light5");
-			CheckSum_Check(awbLightStart4000+4096, awbLightEnd4000+4096, 3, 0, "Light4");
-			CheckSum_Check(awbLightStart3100+4096, awbLightEnd3100+4096, 2, 0, "Light3");
-			CheckSum_Check(AFhallStart+4096, AFhallEnd+4096, 1, 0, "AFHall");
-			CheckSum_Check(hallStart+4096, hallEnd+4096, 1, 0, "OISHall");
-			CheckSum_Check(afDriftStart+4096, afDriftEnd+4096, 1, 0, "Drift");
-			CheckSum_Check(afStart+4096, afEnd+4096, 21, 0, "AFCal");
-			CheckSum_Check(lscStart+4096, lscEnd+4096, 1, 0, "LSCCal");
-			CheckSum_Check(pdafGainStart+4096, pdafGainEnd+4214, 243, 0, "PDAF");
-			CheckSum_Check(DCCStart+4214, DCCEnd+4214, 3, 0, "DCCcal");
+		if (modelSelect == 3) {
+			CheckSum_Check(LRCStart, LRCEnd, 177, 0, "SonyLRC");
+			CheckSum_Check(SonyDCCStart, SonyDCCEnd, 3, 0, "SonyDCC");
+			fout << endl;
+			fout << "~~~~~~~~~~~Tele~~~~~~~~~~~" << endl;
+
+			CheckSum_Check(infoStart + 4096, infoEnd + 4096, 30, 0, "Info");
+			CheckSum_Check(awbStart4000 + 4096, awbEnd4000 + 4096, 5, 0, "4000K");
+			CheckSum_Check(awbStart3100 + 4096, awbEnd3100 + 4096, 6, 0, "3100K");
+			CheckSum_Check(awbLightStart + 4096, awbLightEnd + 4096, 5, 0, "Light5");
+			CheckSum_Check(awbLightStart4000 + 4096, awbLightEnd4000 + 4096, 3, 0, "Light4");
+			CheckSum_Check(awbLightStart3100 + 4096, awbLightEnd3100 + 4096, 3, 0, "Light3");
+			CheckSum_Check(AFhallStart + 4096, AFhallEnd + 4096, 1, 0, "AFHall");
+			CheckSum_Check(hallStart + 4096, hallEnd + 4096, 1, 0, "OISHall");
+			CheckSum_Check(afDriftStart + 4096, afDriftEnd + 4096, 1, 0, "Drift");
+			CheckSum_Check(afStart + 4096, afEnd + 4096, 21, 0, "AFCal");
+			CheckSum_Check(lscStart + 4096, lscEnd + 4096, 1, 0, "LSCCal");
+			CheckSum_Check(pdafGainStart + 4096, pdafGainEnd + 4214, 243, 0, "PDAF");
+			CheckSum_Check(DCCStart + 4214, DCCEnd + 4214, 3, 0, "DCCcal");
 
 		}
-		
-/////////////////////////////////////////////////////////////
+		fout << endl;
+		fout << "~~~~~~~~~~~Total~~~~~~~~~~~" << endl;
+
+		/////////////////////////////////////////////////////////////
 		CheckSum_Check(oisStart1, oisEnd1, 1, 0, "OIS1");
 		CheckSum_Check(oisStart2, oisEnd2, 1, 0, "OIS2");
 		CheckSum_Check(DAStart, DAEnd, 1, 0, "DACal");
 
-		CheckSum_Check(dualCalStart, dualCalEnd, 1, 0, "Dual");
-
+		CheckSum_Check(dualCalStart, dualCalEnd, 1, 0, "DualCal");
 		CheckSum_Check(dualVerifyStart, dualVerifyEnd, 1, 0, "Dual_V");
-		CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
+		
+
+
 		CheckSum_Check(confidenceStart, confidenceEnd, 1, 0, "Confid");
 		CheckSum_Check(pdaf_max_roiStart, pdaf_max_roiEnd, 1, 0, "Max_ROI");
-		if(modelSelect==4)
-			CheckSum_Check(DualAWBStart, DualAWBEnd, 1, 0, "D_AWB");
 
+		if (modelSelect == 3) {
+			CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
+			CheckSum_Check(QSCStart, QSCEnd, 1, 0, "QSCCal");
+
+		}
+
+		if (modelSelect == 4){
+			CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
+		//	CheckSum_Check(DualAWBStart, DualAWBEnd, 1, 0, "D_AWB");
+			CheckSum_Check(distortiomStart, distortiomEnd, 1, 0, "Distor");
+		}
 		if (totalCheckSum > 0) {
 			fout << "Total	";
 			fout << D[totalCheckSum][0] << D[totalCheckSum][1] << "	";
-		
+
 			TCSum = TCSum % 255;
 			if (modelSelect != 1)
 				TCSum++;
@@ -2770,7 +2795,7 @@ void widget6::on_pushButton_parser_clicked()
 		}
 
 		fout << endl;
-////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 
 		fout << "-------basic info------" << endl;
 
@@ -2779,20 +2804,20 @@ void widget6::on_pushButton_parser_clicked()
 		}
 
 		if (productDateStart > 0) {
-			date_Parse(productDateStart,productDateEnd);
+			date_Parse(productDateStart, productDateEnd);
 		}
 
 		if (fuseIDEnd > 0) {
-			e = fuseIDStart+1;
+			e = fuseIDStart + 1;
 			fout << "Sensor Fuse ID:	";
 			for (int i = 0; i < 9; i++) {
-				fout << D[e + i][0] << D[e+ i][1];
+				fout << D[e + i][0] << D[e + i][1];
 			}
 			fout << endl;
 		}
 
 		if (serialNumberStart > 0) {
-			QR_Parse(serialNumberStart,serialNumberEnd);
+			QR_Parse(serialNumberStart, serialNumberEnd);
 		}
 
 		if (hallStart > 0) {
@@ -2800,31 +2825,31 @@ void widget6::on_pushButton_parser_clicked()
 		}
 
 		if (afDriftStart > 0) {
-			drift_Parse(afDriftStart,afDriftEnd);
+			drift_Parse(afDriftStart, afDriftEnd);
 		}
 
 		if (afStart > 0) {
 			af_Parse(afStart, afEnd);
 		}
-///////////////AWBdata
+		///////////////AWBdata
 		if (awbStart > 0) {
 			awb_Parse(awbStart, 0);
 		}
 
-///////////////LSCdata
+		///////////////LSCdata
 		if (lscStart > 0) {
-			lsc_Parse(lscStart,lscEnd);
+			lsc_Parse(lscStart, lscEnd);
 		}
 
 		if (pdafGainStart > 0) {
-			gain_Map_Parse(pdafGainStart,pdafGainEnd);
+			gain_Map_Parse(pdafGainStart, pdafGainEnd);
 		}
 
 		if (DCCStart > 0) {
-			DCC_Parse(DCCStart,DCCEnd);		
+			DCC_Parse(DCCStart, DCCEnd);
 		}
 
-		if (FVStart > 0) {
+		if (FVStart > 0 && modelSelect < 3) {
 			//FV Data map:
 			fout << "~~~FV Data map:" << endl;
 			e = FVStart;
@@ -2845,7 +2870,7 @@ void widget6::on_pushButton_parser_clicked()
 			fout << endl;
 		}
 
-		if (PDStart > 0) {
+		if (PDStart > 0 && modelSelect < 3) {
 			//PD Data map:
 			fout << "~~~PD Data map:" << endl;
 			e = PDStart;
@@ -2866,13 +2891,12 @@ void widget6::on_pushButton_parser_clicked()
 			fout << endl;
 		}
 
-		if ( modelSelect == 3 || modelSelect == 4) {
-			
-			sony_LRC_Parse(LRCStart,LRCEnd);
-			sony_DCC_Parse(SonyDCCStart,SonyDCCEnd);
-			basicInfo_Parse(infoStart+0x1000, infoEnd + 0x1000);
+		if (modelSelect == 3) {
+		Wide_length_pixel_1M:
+			sony_LRC_Parse(LRCStart, LRCEnd);
+			sony_DCC_Parse(SonyDCCStart, SonyDCCEnd);
+			basicInfo_Parse(infoStart + 0x1000, infoEnd + 0x1000);
 			date_Parse(productDateStart + 0x1000, productDateEnd + 0x1000);
-			QR_Parse(serialNumberStart + 0x1000, serialNumberEnd + 0x1000);
 			OIS_Hall_Parse(hallStart + 0x1000, hallEnd + 0x1000);
 			drift_Parse(afDriftStart + 0x1000, afDriftEnd + 0x1000);
 			af_Parse(afStart + 0x1000, afEnd + 0x1000);
@@ -2880,29 +2904,34 @@ void widget6::on_pushButton_parser_clicked()
 			lsc_Parse(lscStart + 0x1000, lscEnd + 0x1000);
 			gain_Map_Parse(pdafGainStart + 0x1000, pdafGainEnd + 0x1000);
 			DCC_Parse(0x1B06, DCCEnd + 0x1B6F);
-
+		}
+		if (modelSelect == 3|| modelSelect == 4) {
 			e = AECStart;
-
-			fout << "Wide_length_pixel_1M:	" << hex2Dec(e)  + hex2Dec(e + 1) * 256 << endl;
+			fout << "------- Dual AEC Data ------" << endl;
+			fout << "Wide_length_pixel_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
 			fout << "Wide_Frame_length_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
-			fout << "Tele_length_pixel_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			fout << "Sub_length_pixel_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
-			fout << "Tele_Frame_length_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			fout << "Sub_Frame_length_1M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
 			fout << "Wide_length_pixel_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
 			fout << "Wide_Frame_length_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
-			fout << "Tele_length_pixel_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			fout << "Sub_length_pixel_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
-			fout << "Tele_Frame_length_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
+			fout << "Sub_Frame_length_5M:	" << hex2Dec(e) + hex2Dec(e + 1) * 256 << endl;
 			e += 2;
 
 		}
 
+		if (modelSelect == 4) {
+			fout << "------- Dual AWB Data ------" << endl;
+			awb_Parse(DualAWBStart, DualAWBEnd);
 
+		}
 
 		if (oisStart1 > 0) {
 			fout << "-------OIS1 CAL Data------" << endl;
@@ -2966,10 +2995,10 @@ void widget6::on_pushButton_parser_clicked()
 			dual_Cal_Parse(dualCalStart, dualCalEnd);
 		}
 
-		if (modelSelect == 3 || modelSelect == 4) {
+		if (modelSelect == 3 ) {
 			//Dual Cal Data:
-			fout << "-------Dual CAL Data 12------" << endl;
-			dual_Cal_Parse(dualCalStart+24, dualCalEnd+24);
+			fout << "-------Dual CAL Data 23------" << endl;
+			dual_Cal_Parse(dualCalStart + 24, dualCalEnd + 24);
 		}
 
 		if (dualVerifyStart > 0) {
@@ -3066,18 +3095,6 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "Ref_Main_pclk:	" << tmp << endl;
 			e += 4;
 		}
-
-		////Bar Code Data:
-		//if (barCodeStart > 0) {
-		//	fout << "--------Bar Code Data-------" << endl;
-		//	e = barCodeStart + 1;
-		//	fout << "Bar Code:	";
-		//	for (int i = 0; i < 12; i++) {
-		//		char a = DecData[e + i];
-		//		fout << a;
-		//	}
-		//	fout << endl;
-		//}
 
 		if (confidenceStart > 0) {
 			//PDAF_DCC_Vivo requested Data:
@@ -3219,7 +3236,7 @@ void widget6::on_pushButton_parser_clicked()
 			fout << endl;
 		}
 
-		if (AAStart > 0) {
+		if (AAStart > 0&& modelSelect==1) {
 			// AA test result:
 			fout << "--------AA test result-------" << endl;
 			e = AAStart;
@@ -3227,13 +3244,13 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "AA Result flag :	" << getFlag(e) << endl;
 			e++;
 			fout << "Equipment type:	" << D[e][0] << D[e][1];
-			fout << '(' ;
-			
+			fout << '(';
+
 			if (D[e][1] == 'A')
 				fout << "A_ASM";
 			if (D[e][1] == 'B')
 				fout << "B_Protec";
-				
+
 			fout << ')' << endl;
 
 			e++;
@@ -3242,14 +3259,14 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "Equipment port No:	" << (int)DecData[e] << endl;
 			e++;
 			fout << "Manufactured Date:	";
-			
+
 			if (modelSelect == 2) {
 				fout << (int)DecData[e] << '-';
 				e++;
 			}
 
 			for (int i = 0; i < 3; i++) {
-				fout << (int)DecData[e+i];
+				fout << (int)DecData[e + i];
 				if (i < 1)
 					fout << "-";
 				if (i == 1)
@@ -3261,51 +3278,52 @@ void widget6::on_pushButton_parser_clicked()
 				e++;
 				fout << ':' << (int)DecData[e] << endl;
 				e++;
-			}else
+			}
+			else
 				fout << ":00" << endl;
 
-		
+
 			tmp = 0;
 			for (int i = 3; i >= 0; i--) {
 				tmp *= 256;
 				tmp += DecData[e + i];
 			}
 
-			if (*fp>2 || *fp < -2) {
+			if (*fp > 2 || *fp < -2) {
 				tmp = 0;
-				for (int i = 0; i <4; i++) {
+				for (int i = 0; i < 4; i++) {
 					tmp *= 256;
 					tmp += DecData[e + i];
 				}
 			}
 
-		//	fp = (float*)&tmp;
+			//	fp = (float*)&tmp;
 			fout << "X tilt:	" << *fp << endl;
 
 
 			e += 4;
 			tmp = 0;
-			for (int i = 3; i >=0; i--) {
+			for (int i = 3; i >= 0; i--) {
 				tmp *= 256;
 				tmp += DecData[e + i];
 			}
 
-			if (*fp>2 || *fp < -2) {
+			if (*fp > 2 || *fp < -2) {
 				tmp = 0;
-				for (int i = 0; i <4; i++) {
+				for (int i = 0; i < 4; i++) {
 					tmp *= 256;
 					tmp += DecData[e + i];
 				}
 			}
 
-		//	fp = (float*)&tmp;
+			//	fp = (float*)&tmp;
 			fout << "Y tilt:	" << *fp << endl;
 
 			e += 4;
 
 			if (modelSelect == 2) {
-				fout << "Wide AA AF Code:	"<<256 * DecData[e] + DecData[e + 1] << endl;
-				e+=2;
+				fout << "Wide AA AF Code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+				e += 2;
 			}
 
 			fout << "optical Center X:	" << 256 * DecData[e] + DecData[e + 1] << endl;
@@ -3315,7 +3333,7 @@ void widget6::on_pushButton_parser_clicked()
 
 			if (modelSelect == 2) {
 				fout << "AA OC BV:	" << (int)DecData[e] << endl;
-				e ++;
+				e++;
 			}
 
 			fout << "MMDM code:	";
@@ -3403,82 +3421,87 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
 		}
 
-		// INF SFR data:
-		fout << "--------INF SFR data-------" << endl;
-		e = infSFRStart;
-		fout << "Resolution Grade:	";
-		if (DecData[e] == 0x53)
-			fout << "S";
-		if (DecData[e] == 0x41)
-			fout << "A";
-		if (DecData[e] == 0x42)
-			fout << "B";
+		if (infSFRStart > 0) {
+			// INF SFR data:
+			fout << "--------INF SFR data-------" << endl;
+			e = infSFRStart;
+			fout << "Resolution Grade:	";
+			if (DecData[e] == 0x53)
+				fout << "S";
+			if (DecData[e] == 0x41)
+				fout << "A";
+			if (DecData[e] == 0x42)
+				fout << "B";
 
-		fout << endl;
+			fout << endl;
 
-		e++;
-		fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-		fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
-		fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
-
-		for (int i = 0; i < 27; i++)
-			fout << "0." << checkFF(DecData[e + i]) << "	";
-
-		fout << endl;
-
-		fout << "--------Mac SFR data-------" << endl;
-		e = macSFRStart;
-		fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-		fout << "0.5TLV	" << "0.5TLH	" << "0.5TRV	" << "0.5TRH	" << "0.5BLH	" << "0.5BLV	" << "0.5BRH	" << "0.5BRV	";
-		fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	" << endl;
-
-		for (int i = 0; i < 27; i++)
-			fout << "0." << checkFF(DecData[e + i]) << "	";
-
-		fout << endl;
-
-		if (MasterSPLStart > 0) {
-			fout << "--------Master SPL Info-------" << endl;
-			e = MasterSPLStart;
-			string str = getFlag(e);
-			fout << "Master SPL flag :	" << str << endl;
 			e++;
-
-			if (str[1]!='N') {
-
-				fout << "~~~5100K AWB Cal Data:" << endl;
-
-				fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-				fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
-				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
-				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
-				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
-				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
-
-				fout << "~~~3100K AWB Cal Data:" << endl;
-				fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
-				fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
-				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
-				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
-				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
-				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
-			
-			}
-		}
-
-		if (Dual_INF_SFRStart > 0) {
-			// Dual INF SFR data:
-			fout << "--------Dual INF SFR data-------" << endl;
-			e = Dual_INF_SFRStart;
-			fout << "Dual INF SFR data:	" << endl;
-
 			fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
 			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
 			fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
 
 			for (int i = 0; i < 27; i++)
 				fout << "0." << checkFF(DecData[e + i]) << "	";
+
+			fout << endl;
 		}
+
+		if (macSFRStart > 0) {
+			fout << "--------Mac SFR data-------" << endl;
+			e = macSFRStart;
+			fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
+			fout << "0.5TLV	" << "0.5TLH	" << "0.5TRV	" << "0.5TRH	" << "0.5BLH	" << "0.5BLV	" << "0.5BRH	" << "0.5BRV	";
+			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	" << endl;
+
+			for (int i = 0; i < 27; i++)
+				fout << "0." << checkFF(DecData[e + i]) << "	";
+
+			fout << endl;
+		}
+
+			if (MasterSPLStart > 0) {
+				fout << "--------Master SPL Info-------" << endl;
+				e = MasterSPLStart;
+				string str = getFlag(e);
+				fout << "Master SPL flag :	" << str << endl;
+				e++;
+
+				if (str[1] != 'N') {
+
+					fout << "~~~5100K AWB Cal Data:" << endl;
+
+					fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+					fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
+					fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
+					fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
+					fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
+					fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
+
+					fout << "~~~3100K AWB Cal Data:" << endl;
+					fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
+					fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
+					fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
+					fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
+					fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
+					fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
+
+				}
+			}
+
+			if (Dual_INF_SFRStart > 0) {
+				// Dual INF SFR data:
+				fout << "--------Dual INF SFR data-------" << endl;
+				e = Dual_INF_SFRStart;
+				fout << "Dual INF SFR data:	" << endl;
+
+				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
+				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
+				fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
+
+				for (int i = 0; i < 27; i++)
+					fout << "0." << checkFF(DecData[e + i]) << "	";
+			}
+	
 
 	}
 	///////////  OTP parse

@@ -1,9 +1,16 @@
-﻿生成启动时间为 2018/11/18 11:12:20。
-     1>项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”在节点 2 上(Build 个目标)。
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IG:\Plug_in\QT\5.8\msvc2015\include /I.\GeneratedFiles\Debug /IG:\Plug_in\QT\5.8\msvc2015\include\QtCore /IG:\Plug_in\QT\5.8\msvc2015\include\QtGui /IG:\Plug_in\QT\5.8\msvc2015\include\QtANGLE /IG:\Plug_in\QT\5.8\msvc2015\include\QtWidgets /Zi /nologo /W1 /WX- /MP /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D _AFXDLL /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt oppo.cpp Widget6.cpp .\GeneratedFiles\qrc_Widget6.cpp
+﻿生成启动时间为 2018/11/24 22:43:13。
+     1>项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>QtFinalize:
+         Moc'ing Widget6.h...
+         Rcc'ing Widget6.qrc...
+         Uic'ing Widget6.ui...
+         RCC: Warning: No resources in 'G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.qrc'.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IG:\Plug_in\QT\5.8\msvc2015\include /I.\GeneratedFiles\Debug /IG:\Plug_in\QT\5.8\msvc2015\include\QtCore /IG:\Plug_in\QT\5.8\msvc2015\include\QtGui /IG:\Plug_in\QT\5.8\msvc2015\include\QtANGLE /IG:\Plug_in\QT\5.8\msvc2015\include\QtWidgets /Zi /nologo /W1 /WX- /MP /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D _AFXDLL /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp oppo.cpp Widget6.cpp .\GeneratedFiles\Debug\moc_Widget6.cpp .\GeneratedFiles\qrc_Widget6.cpp
+         main.cpp
          oppo.cpp
          Widget6.cpp
+         moc_Widget6.cpp
          qrc_Widget6.cpp
          _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
        Link:
@@ -13,8 +20,8 @@
          Debug\moc_Widget6.obj
          Debug\qrc_Widget6.obj
          Widget6.vcxproj -> G:\Visual Studio 2015\Projects\Widget6\Win32\Debug\Widget6.exe
-     1>已完成生成项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”(Build 个目标)的操作。
+     1>已完成生成项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”(Rebuild 个目标)的操作。
 
 已成功生成。
 
-已用时间 00:00:09.29
+已用时间 00:00:09.18
