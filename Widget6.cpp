@@ -2681,7 +2681,11 @@ void widget6::on_pushButton_parser_clicked()
 
 		if (modelSelect > 2 && modelSelect < 5) {
 			CheckSum_Check(awbStart4000, awbEnd4000, 5, 0, "4000K");
-			CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "3100K");
+			if(modelSelect==3)
+				CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "3100K");
+			if (modelSelect == 4)
+				CheckSum_Check(awbStart3100-2, awbEnd3100, 6, 0, "3100K");
+
 			CheckSum_Check(awbLightStart, awbLightEnd, 5, 0, "Light5");
 			CheckSum_Check(awbLightStart4000, awbLightEnd4000, 3, 0, "Light4");
 			CheckSum_Check(awbLightStart3100, awbLightEnd3100, 3, 0, "Light3");
@@ -3040,7 +3044,7 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "Range:	" << *dp << endl;
 		}
 
-		if (AECStart > 0) {
+		if (AECStart > 0&&modelSelect!=3 && modelSelect != 4) {
 
 			//AEC Cal Data:
 			fout << "--------AEC Cal Data-------" << endl;
@@ -3440,9 +3444,12 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
 			fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
 
-			for (int i = 0; i < 27; i++)
-				fout << "0." << checkFF(DecData[e + i]) << "	";
-
+			for (int i = 0; i < 27; i++){
+				fout << "0.";
+				if (DecData[e + i] < 10)
+					fout << "0";
+				fout << checkFF(DecData[e + i]) << "	";
+			}
 			fout << endl;
 		}
 
@@ -3453,9 +3460,12 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "0.5TLV	" << "0.5TLH	" << "0.5TRV	" << "0.5TRH	" << "0.5BLH	" << "0.5BLV	" << "0.5BRH	" << "0.5BRV	";
 			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	" << endl;
 
-			for (int i = 0; i < 27; i++)
-				fout << "0." << checkFF(DecData[e + i]) << "	";
-
+			for (int i = 0; i < 27; i++){
+				fout << "0.";
+				if (DecData[e + i] < 10)
+					fout << "0";
+				fout << checkFF(DecData[e + i]) << "	";
+			}
 			fout << endl;
 		}
 
@@ -3873,9 +3883,12 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
 				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
 				fout << endl;
-				for (int i = 0; i < 19; i++)
-					fout << "0." << checkFF(DecData[e + i]) << "	";
-
+				for (int i = 0; i < 19; i++){
+					fout << "0.";
+					if (DecData[e + i] < 10)
+						fout << "0";
+					fout << checkFF(DecData[e + i]) << "	";
+				}
 				fout << endl;
 			}
 		}
@@ -3889,9 +3902,12 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
 				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
 				fout << endl;
-				for (int i = 0; i < 19; i++)
-					fout << "0." << checkFF(DecData[e + i]) << "	";
-
+				for (int i = 0; i < 19; i++){
+					fout << "0.";
+					if(DecData[e + i]<10)
+						fout << "0";
+					fout << checkFF(DecData[e + i]) << "	";
+				}
 				fout << endl;
 			}
 		}
@@ -3906,9 +3922,9 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
 				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
 				fout << endl;
-				for (int i = 0; i < 19; i++)
+				for (int i = 0; i < 19; i++){
 					fout << "0." << checkFF(DecData[e + i]) << "	";
-
+				}
 				fout << endl;
 			}
 		}
