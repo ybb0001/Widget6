@@ -1,6 +1,8 @@
-﻿生成启动时间为 2018/11/29 21:22:34。
+﻿生成启动时间为 2018/12/15 21:36:37。
      1>项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”在节点 2 上(Build 个目标)。
-     1>ClCompile:
+     1>QtFinalize:
+         Uic'ing Widget6.ui...
+       ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IG:\Plug_in\QT\5.8\msvc2015\include /I.\GeneratedFiles\Debug /IG:\Plug_in\QT\5.8\msvc2015\include\QtCore /IG:\Plug_in\QT\5.8\msvc2015\include\QtGui /IG:\Plug_in\QT\5.8\msvc2015\include\QtANGLE /IG:\Plug_in\QT\5.8\msvc2015\include\QtWidgets /Zi /nologo /W1 /WX- /MP /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D _AFXDLL /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Widget6.cpp
          Widget6.cpp
          _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
@@ -15,4 +17,4 @@
 
 已成功生成。
 
-已用时间 00:00:05.40
+已用时间 00:00:07.45

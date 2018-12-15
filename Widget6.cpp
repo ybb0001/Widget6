@@ -2207,10 +2207,35 @@ void af_Parse(int S, int E) {
 		e = e + 2;
 		fout << "AF Hall Min:	" << DecData[e] + DecData[e + 1] * 256 << endl;
 		e = e + 1;
-		fout << "AF Hall_Offset:	" << (int)DecData[e] << endl;
-		e = e + 1;
-		fout << "AF Hall_BIAS:	" << (int)DecData[e] << endl;
+		if (modelSelect == 3){
+			fout << "AF Hall_Offset:	" << (int)DecData[e] << endl;
+			e = e + 1;
+			fout << "AF Hall_BIAS:	" << (int)DecData[e] << endl;
+		}
 	}
+
+}
+
+
+
+void Dual_AWB_Parse(int S, int E, string str) {
+	int e = S;
+
+	fout << "Main_Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Main_Gr :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Main_Gb :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Main_Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << str <<"Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << str << "Gr :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << str << "Gb :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << str << "Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
 
 }
 
@@ -2251,63 +2276,18 @@ void awb_Parse(int S, int E){
 	}
 
 	if (modelSelect == 3 || modelSelect == 4) {
-		//extern void Oppo_AWB(int s, int e, ofstream *f);
+		
 		e = awbStart+E;
 		fout << "~~~5100K AWB Cal Data:" << endl;
-		fout << "AWB_Red :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Blue :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
+		Dual_AWB_Parse(e,0,"Golden_");
 
 		e = awbStart4000+E;
 		fout << "~~~4000K AWB Cal Data:" << endl;
-		fout << "AWB_Red :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Blue :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
+		Dual_AWB_Parse(e,0, "Golden_");
 
 		e = awbStart3100+E;
 		fout << "~~~3100K AWB Cal Data:" << endl;
-		fout << "AWB_Red :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "AWB_Blue :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_R :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_Gr :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_Gb :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "Golden_B :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
+		Dual_AWB_Parse(e,0, "Golden_");
 
 		e = awbLightStart+E;
 		fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
@@ -2318,9 +2298,9 @@ void awb_Parse(int S, int E){
 		e = e + 2;
 		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = awbLightStart3100+E;
-		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
+		fout << "3100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 		e = e + 2;
-		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
+		fout << "3100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
 	}
 
 }
@@ -2512,11 +2492,13 @@ void sony_LRC_Parse(int S, int E) {
 
 	fout << "~~~Sony LRC Data map:" << endl;
 	int e = S;
-	for (int i = 0; i < 12; i++)
-		for (int j = 0; j < 16; j++) {
-			LRC[0][i][j] = DecData[e];
-			e++;
-		}
+
+	if (modelSelect == 3){
+		for (int i = 0; i < 12; i++)
+			for (int j = 0; j < 16; j++) {
+				LRC[0][i][j] = DecData[e];
+				e++;
+			}
 
 	for (int i = 0; i < 12; i++)
 		for (int j = 0; j < 16; j++) {
@@ -2538,6 +2520,36 @@ void sony_LRC_Parse(int S, int E) {
 			fout << LRC[1][i][j] << "	";
 		}
 		fout << endl;
+	}
+}
+	if (modelSelect == 4) {
+		for (int i = 0; i < 7; i++)
+			for (int j = 0; j < 10; j++) {
+				LRC[0][i][j] = DecData[e];
+				e++;
+			}
+
+		for (int i = 0; i < 7; i++)
+			for (int j = 0; j < 10; j++) {
+				LRC[1][i][j] = DecData[e];
+				e++;
+			}
+
+		fout << endl;
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 10; j++) {
+				fout << LRC[0][i][j] << "	";
+			}
+			fout << endl;
+		}
+		fout << endl;
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 10; j++) {
+				fout << LRC[1][i][j] << "	";
+			}
+			fout << endl;
+		}
 	}
 	fout << endl;
 
@@ -2572,47 +2584,106 @@ void dual_Cal_Parse(int S, int E) {
 	unsigned int Dou[2] = { 0,0 };
 	double* dp = (double*)Dou;
 	int e = S;
-	if(modelSelect!=3&& modelSelect != 4)
+	if (modelSelect < 3 ){
 		S++;
-
-	for (int p = 0; p < 2; p++) {
-		for (int i = 0; i < 4; i++) {
-			Dou[p] *= 256;
-			Dou[p] += DecData[e + i];
+		for (int p = 0; p < 2; p++) {
+			for (int i = 0; i < 4; i++) {
+				Dou[p] *= 256;
+				Dou[p] += DecData[e + i];
+			}
+			e += 4;
 		}
-		e += 4;
-	}
+		fout << "Pan:	" << *dp << endl;
 
-	fout << "Pan:	" << *dp << endl;
-
-	for (int p = 0; p < 2; p++) {
-		Dou[p] = 0;
-		for (int i = 0; i < 4; i++) {
-			Dou[p] *= 256;
-			Dou[p] += DecData[e + i];
+		for (int p = 0; p < 2; p++) {
+			Dou[p] = 0;
+			for (int i = 0; i < 4; i++) {
+				Dou[p] *= 256;
+				Dou[p] += DecData[e + i];
+			}
+			e += 4;
 		}
-		e += 4;
-	}
+		fout << "Roll:	" << *dp << endl;
 
-	fout << "Roll:	" << *dp << endl;
-
-	for (int p = 0; p < 2; p++) {
-		Dou[p] = 0;
-		for (int i = 0; i < 4; i++) {
-			Dou[p] *= 256;
-			Dou[p] += DecData[e + i];
+		for (int p = 0; p < 2; p++) {
+			Dou[p] = 0;
+			for (int i = 0; i < 4; i++) {
+				Dou[p] *= 256;
+				Dou[p] += DecData[e + i];
+			}
+			e += 4;
 		}
-		e += 4;
-	}
+		fout << "Tilt:	" << *dp << endl;	
 
-	fout << "Tilt:	" << *dp << endl;
-	if (modelSelect != 3 && modelSelect != 4)
 		fout << "AF_calibration_code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+	}
 
+	if (modelSelect ==3 || modelSelect == 4) {
+		e = e + 7;
+		for (int p = 1; p >=0; p--) {
+			for (int i = 0; i < 4; i++) {
+				Dou[p] *= 256;
+				Dou[p] += DecData[e--];
+			}
+		}
+		fout << "Pan:	" << *dp << endl;
+		e = S + 15;
+		for (int p = 1; p >= 0; p--) {
+			Dou[p] = 0;
+			for (int i = 0; i < 4; i++) {
+				Dou[p] *= 256;
+				Dou[p] += DecData[e--];
+			}
+		}
+		fout << "Roll:	" << *dp << endl;
+		e = S + 23;
+		for (int p = 1; p >= 0; p--) {
+			Dou[p] = 0;
+			for (int i = 0; i < 4; i++) {
+				Dou[p] *= 256;
+				Dou[p] += DecData[e --];
+			}
+		}
+		fout << "Tilt:	" << *dp << endl;
+
+	}
 }
 
 
 
+void SFR_display(int group, int e) {
+
+	fout << "Center_1	"; 
+	int g = group - 1;
+	if (modelSelect == 3 || modelSelect == 4) {
+		fout << "Center_2	";
+		g--;
+	}
+
+	for (int i = 0; i < g; i++) {
+		fout << "Group_" << i / 84 + 1 << "_" << i % 8 + 1 << "	";
+	}
+	fout << endl;
+
+	for (int i = 0; i < group; i++) {
+		fout << "0.";
+		if (DecData[e + i] < 10)
+			fout << "0";
+		fout << checkFF(DecData[e + i]) << "	";
+	}
+	fout << endl;
+
+
+}
+
+void Test_Date_display(int e, string str) {
+
+	if (e > 0) {
+		fout << str<< "	" << getFlag(e) << "	" << D[e + 1][0] << D[e + 1][1] << "	" << D[e + 2][0] << D[e + 2][1];
+		fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
+	}
+
+}
 
 
 void widget6::on_pushButton_parser_clicked()
@@ -2681,10 +2752,10 @@ void widget6::on_pushButton_parser_clicked()
 
 		if (modelSelect > 2 && modelSelect < 5) {
 			CheckSum_Check(awbStart4000, awbEnd4000, 5, 0, "4000K");
-			if(modelSelect==3)
+		//	if(modelSelect==3)
 				CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "3100K");
-			if (modelSelect == 4)
-				CheckSum_Check(awbStart3100-2, awbEnd3100, 6, 0, "3100K");
+	//		if (modelSelect == 4)
+	//			CheckSum_Check(awbStart3100-2, awbEnd3100, 6, 0, "3100K");
 
 			CheckSum_Check(awbLightStart, awbLightEnd, 5, 0, "Light5");
 			CheckSum_Check(awbLightStart4000, awbLightEnd4000, 3, 0, "Light4");
@@ -2703,8 +2774,10 @@ void widget6::on_pushButton_parser_clicked()
 		CheckSum_Check(pdafGainStart, pdafGainEnd, 125, 0, "PDAF");
 		CheckSum_Check(DCCStart, DCCEnd, 3, 0, "DCCcal");
 		////////////////Sony DCC and Tele/////////////////////////////////////////
-
-
+		if (modelSelect == 4) {
+			CheckSum_Check(LRCStart, LRCEnd, 177, 0, "SonyLRC");
+			CheckSum_Check(SonyDCCStart, SonyDCCEnd, 3, 0, "SonyDCC");
+		}
 		if (modelSelect == 3) {
 			CheckSum_Check(LRCStart, LRCEnd, 177, 0, "SonyLRC");
 			CheckSum_Check(SonyDCCStart, SonyDCCEnd, 3, 0, "SonyDCC");
@@ -2713,7 +2786,7 @@ void widget6::on_pushButton_parser_clicked()
 
 			CheckSum_Check(infoStart + 4096, infoEnd + 4096, 30, 0, "Info");
 			CheckSum_Check(awbStart4000 + 4096, awbEnd4000 + 4096, 5, 0, "4000K");
-			CheckSum_Check(awbStart3100 + 4096, awbEnd3100 + 4096, 6, 0, "3100K");
+			CheckSum_Check(awbStart3100 + 4094, awbEnd3100 + 4096, 6, 0, "3100K");
 			CheckSum_Check(awbLightStart + 4096, awbLightEnd + 4096, 5, 0, "Light5");
 			CheckSum_Check(awbLightStart4000 + 4096, awbLightEnd4000 + 4096, 3, 0, "Light4");
 			CheckSum_Check(awbLightStart3100 + 4096, awbLightEnd3100 + 4096, 3, 0, "Light3");
@@ -2895,10 +2968,13 @@ void widget6::on_pushButton_parser_clicked()
 			fout << endl;
 		}
 
-		if (modelSelect == 3) {
-		Wide_length_pixel_1M:
+		if (modelSelect == 3|| modelSelect == 4) {
+
 			sony_LRC_Parse(LRCStart, LRCEnd);
 			sony_DCC_Parse(SonyDCCStart, SonyDCCEnd);
+		}
+
+		if (modelSelect == 3) {
 			basicInfo_Parse(infoStart + 0x1000, infoEnd + 0x1000);
 			date_Parse(productDateStart + 0x1000, productDateEnd + 0x1000);
 			OIS_Hall_Parse(hallStart + 0x1000, hallEnd + 0x1000);
@@ -2933,7 +3009,17 @@ void widget6::on_pushButton_parser_clicked()
 
 		if (modelSelect == 4) {
 			fout << "------- Dual AWB Data ------" << endl;
-			awb_Parse(DualAWBStart, DualAWBEnd);
+			e = 0xD50;
+			fout << "~~~5100K AWB Cal Data:" << endl;
+			Dual_AWB_Parse(e, 0,"Sub_");
+
+			e = 0xD60;
+			fout << "~~~4000K AWB Cal Data:" << endl;
+			Dual_AWB_Parse(e, 0, "Sub_");
+
+			e = 0xD70;
+			fout << "~~~3100K AWB Cal Data:" << endl;
+			Dual_AWB_Parse(e, 0, "Sub_");
 
 		}
 
@@ -3240,7 +3326,7 @@ void widget6::on_pushButton_parser_clicked()
 			fout << endl;
 		}
 
-		if (AAStart > 0&& modelSelect==1) {
+		if (AAStart > 0) {
 			// AA test result:
 			fout << "--------AA test result-------" << endl;
 			e = AAStart;
@@ -3258,13 +3344,13 @@ void widget6::on_pushButton_parser_clicked()
 			fout << ')' << endl;
 
 			e++;
-			fout << "Equipment No:	" << (int)DecData[e] << endl;
+			fout << "Equipment Number:	" << (int)DecData[e] << endl;
 			e++;
 			fout << "Equipment port No:	" << (int)DecData[e] << endl;
 			e++;
-			fout << "Manufactured Date:	";
+			fout << "Manufacture Date:	";
 
-			if (modelSelect == 2) {
+			if (modelSelect == 2|| modelSelect == 3) {
 				fout << (int)DecData[e] << '-';
 				e++;
 			}
@@ -3277,7 +3363,7 @@ void widget6::on_pushButton_parser_clicked()
 					fout << " ";
 			}
 			e += 3;
-			if (modelSelect == 2) {
+			if (modelSelect == 2|| modelSelect == 3) {
 				fout << ':' << (int)DecData[e];
 				e++;
 				fout << ':' << (int)DecData[e] << endl;
@@ -3325,7 +3411,7 @@ void widget6::on_pushButton_parser_clicked()
 
 			e += 4;
 
-			if (modelSelect == 2) {
+			if (modelSelect == 2 || modelSelect == 3) {
 				fout << "Wide AA AF Code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 				e += 2;
 			}
@@ -3335,21 +3421,23 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "optical Center Y:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 			e += 2;
 
-			if (modelSelect == 2) {
+			if (modelSelect == 2 || modelSelect == 3) {
 				fout << "AA OC BV:	" << (int)DecData[e] << endl;
 				e++;
 			}
 
-			fout << "MMDM code:	";
-			for (int i = 0; i < 8; i++) {
-				char c = DecData[e + i];
-				fout << c;
+			if (modelSelect < 3) {
+				fout << "MMDM code:	";
+				for (int i = 0; i < 8; i++) {
+					char c = DecData[e + i];
+					fout << c;
+				}
 			}
 			fout << endl;
 		}
 
 		// Test item date:
-		fout << "--------Test result Data-------" << endl;
+		fout << "--------Main Test Result Data-------" << endl;
 		fout << "Test_Item	" << "Flag	" << "Line No.	" << "Equip No.	" << "Date	" << endl;
 
 		e = hallDate;
@@ -3427,8 +3515,38 @@ void widget6::on_pushButton_parser_clicked()
 
 		if (infSFRStart > 0) {
 			// INF SFR data:
-			fout << "--------INF SFR data-------" << endl;
+			fout << "--------Main INF SFR data-------" << endl;
 			e = infSFRStart;
+			fout << "Resolution Grade:	";
+			if (DecData[e] == 0x53)
+				fout << "S";
+			if (DecData[e] == 0x41)
+				fout << "A";
+			if (DecData[e] == 0x42)
+				fout << "B";
+
+			fout << endl;
+			e++;
+
+			if (modelSelect < 3)
+				SFR_display(27, e);
+			if (modelSelect == 3){
+				SFR_display(26, e);
+				fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
+			//	SFR_display(17, e+0x20);
+			}
+		}
+
+		if (modelSelect == 3) {
+
+			Test_Date_display(hallDate + 0x1E0, "(Hall)");
+			Test_Date_display(af_infDate + 0x1E0, "(INF)");
+			Test_Date_display(awbDate + 0x1E0, "(AWB)");
+			Test_Date_display(pdafDate + 0x1E0, "(PDAF)");
+			Test_Date_display(oisDate1 + 0x1E0, "(OIS1)");
+
+			fout << "--------Sub INF SFR data-------" << endl;
+			e = infSFRStart + 0x1E0;
 			fout << "Resolution Grade:	";
 			if (DecData[e] == 0x53)
 				fout << "S";
@@ -3440,18 +3558,11 @@ void widget6::on_pushButton_parser_clicked()
 			fout << endl;
 
 			e++;
-			fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
-			fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
+			SFR_display(26, e);
+			fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
 
-			for (int i = 0; i < 27; i++){
-				fout << "0.";
-				if (DecData[e + i] < 10)
-					fout << "0";
-				fout << checkFF(DecData[e + i]) << "	";
-			}
-			fout << endl;
 		}
+
 
 		if (macSFRStart > 0) {
 			fout << "--------Mac SFR data-------" << endl;
