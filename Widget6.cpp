@@ -71,7 +71,7 @@ int aecDate = 0x1F50;
 int dual_resolutionDate = 0x1F60;
 
 //SFR
-int infSFRStart = 0x1F70;
+int infSFRStart = 0x1F70, infSFRStart2 = 0x3AEF;
 int macSFRStart = 0x1F90;
 
 //Master sample
@@ -1226,7 +1226,81 @@ void widget6::selectModel() {
 	string str1 = ".\\Setting\\";
 	EEPROM_Map = str1 + EEPROM_Map;
 	save_EEPROM_Setting();
+	if (modelSelect == 3)
+		EEP_Size = 16384;
+	else 
+		EEP_Size = 8192;
 }
+
+
+void lsc_Parse(int S, int E) {
+
+	fout << "-------LSC CAL Data------" << endl;
+	if (modelSelect != 3 && modelSelect != 4) {
+		int e = S + 1;
+		fout << "Horizontal Lens Correction Size:	" << (int)DecData[e] << endl;
+		fout << "Vertical Lens Correction Size:	" << (int)DecData[e + 1] << endl;
+		e = e + 2;
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				for (int k = 0; k < 4; k++) {
+					LSC[i][j][k] = DecData[e + k];
+					LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
+				}
+				e += 5;
+			}
+	}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		int e = S;
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				for (int k = 0; k < 4; k++) {
+					LSC[i][j][k] = DecData[e + k];
+					LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
+				}
+				e += 5;
+				if ((i * 17 + j + 1) % 51 == 0) {
+					e++;
+				}
+			}
+	}
+
+	fout << "~~~Red Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][0] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Gr Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][1] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Gb Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][2] << "	";
+		}
+		fout << endl;
+	}
+
+	fout << "~~~Blue Channel LSC:" << endl;
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 17; j++) {
+			fout << LSC[i][j][3] << "	";
+		}
+		fout << endl;
+	}
+	fout << endl;
+
+}
+
 
 
 void pushData() {
@@ -1627,6 +1701,18 @@ void widget6::findData(){
 }
 
 
+
+void widget6::Item_Output() {
+
+	if (lscStart > 0&&ui->checkBox_LSC->isChecked()) {
+		lsc_Parse(lscStart, lscEnd);
+	}
+
+
+}
+
+
+
 void widget6::EEPROM_dumpRead(int f) {
 
 	selectModel();
@@ -1681,6 +1767,9 @@ void widget6::EEPROM_dumpRead(int f) {
 				case 1:
 					findData();
 					break;
+				case 2:
+					Item_Output();
+					break;
 				default:
 					break;
 				}
@@ -1700,8 +1789,7 @@ void widget6::on_pushButton_find_clicked() {
 	fuseId = ui->fuseId->document()->toPlainText().toLocal8Bit();
 	barCode = ui->barCode->document()->toPlainText().toLocal8Bit();
 
-	EEPROM_dumpRead(1);
-
+	EEPROM_dumpRead(2);
 
 }
 
@@ -1740,7 +1828,7 @@ void widget6::on_pushButton_dumpRead_clicked()
 		now = 0;
 		int len = src.length() - 1;
 		while (now < len) {
-			if (e < 8192) {
+			if (e < EEP_Size) {
 
 				if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
 					((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
@@ -1759,7 +1847,7 @@ void widget6::on_pushButton_dumpRead_clicked()
 				else now++;
 			}
 			else {
-				pushData();
+				Item_Output();
 				e = 0;
 			}
 		}
@@ -2306,75 +2394,6 @@ void awb_Parse(int S, int E){
 }
 
 
-void lsc_Parse(int S, int E) {
-
-	fout << "-------LSC CAL Data------" << endl;
-	if (modelSelect != 3 && modelSelect != 4) {
-		int e = S + 1;
-		fout << "Horizontal Lens Correction Size:	" << (int)DecData[e] << endl;
-		fout << "Vertical Lens Correction Size:	" << (int)DecData[e + 1] << endl;
-		e = e + 2;
-		for (int i = 0; i < 13; i++)
-			for (int j = 0; j < 17; j++) {
-				for (int k = 0; k < 4; k++) {
-					LSC[i][j][k] = DecData[e + k];
-					LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
-				}
-				e += 5;
-			}
-	}
-
-	if (modelSelect == 3 || modelSelect == 4) {
-		int e = S;
-		for (int i = 0; i < 13; i++)
-			for (int j = 0; j < 17; j++) {
-				for (int k = 0; k < 4; k++) {
-					LSC[i][j][k] = DecData[e + k];
-					LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
-				}
-				e += 5;
-				if ((i * 17 + j + 1) % 51 == 0) {
-					e++;
-				}
-			}
-	}
-
-	fout << "~~~Red Channel LSC:" << endl;
-	for (int i = 0; i < 13; i++) {
-		for (int j = 0; j < 17; j++) {
-			fout << LSC[i][j][0] << "	";
-		}
-		fout << endl;
-	}
-
-	fout << "~~~Gr Channel LSC:" << endl;
-	for (int i = 0; i < 13; i++) {
-		for (int j = 0; j < 17; j++) {
-			fout << LSC[i][j][1] << "	";
-		}
-		fout << endl;
-	}
-
-	fout << "~~~Gb Channel LSC:" << endl;
-	for (int i = 0; i < 13; i++) {
-		for (int j = 0; j < 17; j++) {
-			fout << LSC[i][j][2] << "	";
-		}
-		fout << endl;
-	}
-
-	fout << "~~~Blue Channel LSC:" << endl;
-	for (int i = 0; i < 13; i++) {
-		for (int j = 0; j < 17; j++) {
-			fout << LSC[i][j][3] << "	";
-		}
-		fout << endl;
-	}
-	fout << endl;
-
-}
-
-
 void gain_Map_Parse(int S, int E) {
 
 	fout << "-------PDAF CAL Data------" << endl;
@@ -2653,6 +2672,16 @@ void dual_Cal_Parse(int S, int E) {
 
 void SFR_display(int group, int e) {
 
+	if (DecData[e] == 0x53)
+		fout << "S";
+	if (DecData[e] == 0x41 || DecData[e] == 1)
+		fout << "A";
+	if (DecData[e] == 0x42 || DecData[e] == 0)
+		fout << "B";
+
+	fout << endl;
+	e++;
+
 	fout << "Center_1	"; 
 	int g = group - 1;
 	if (modelSelect == 3 || modelSelect == 4) {
@@ -2661,7 +2690,7 @@ void SFR_display(int group, int e) {
 	}
 
 	for (int i = 0; i < g; i++) {
-		fout << "Group_" << i / 84 + 1 << "_" << i % 8 + 1 << "	";
+		fout << "Group_" << i / 8 + 1 << "_" << i % 8 + 1 << "	";
 	}
 	fout << endl;
 
@@ -2683,6 +2712,21 @@ void Test_Date_display(int e, string str) {
 		fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
 	}
 
+}
+
+void OIS_Parse(int S, int E ,string s) {
+	if ( S > 0) {
+		fout << "-------"<< s <<"------" << endl;
+		int e = S;
+		if (modelSelect != 3)
+			e++;
+
+		fout << "Suppression Ratio X:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+
+		e += 2;
+		fout << "Suppression Ratio Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+	
+	}
 }
 
 
@@ -2771,7 +2815,7 @@ void widget6::on_pushButton_parser_clicked()
 		CheckSum_Check(afDriftStart, afDriftEnd, 1, 0, "Drift");
 		CheckSum_Check(afStart, afEnd, 21, 0, "AFCal");
 		CheckSum_Check(lscStart, lscEnd, 1, 0, "LSCCal");
-		CheckSum_Check(pdafGainStart, pdafGainEnd, 125, 0, "PDAF");
+		CheckSum_Check(pdafGainStart, pdafGainEnd, 125, 0, "GainM");
 		CheckSum_Check(DCCStart, DCCEnd, 3, 0, "DCCcal");
 		////////////////Sony DCC and Tele/////////////////////////////////////////
 		if (modelSelect == 4) {
@@ -3067,15 +3111,13 @@ void widget6::on_pushButton_parser_clicked()
 
 		}
 
-		if (oisStart2 > 0) {
-			//OIS2 Data map:
-			fout << "-------OIS2 CAL Data------" << endl;
-			e = oisStart2 + 1;
-			fout << "Suppression Ratio X:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+		OIS_Parse(oisStart2,0,"Main_OIS_SR");
 
-			e += 2;
-			fout << "Suppression Ratio Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+		if (modelSelect == 3) {
+			OIS_Parse( oisStart2+4, 0 , "Sub_OIS_SR");
+
 		}
+
 
 		unsigned int Dou[2] = { 0,0 };
 		double* dp = (double*)Dou;
@@ -3446,15 +3488,15 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
 		}
 
-		e = af_infDate;
-		if (e > 0) {
-			fout << "(INF)	" << getFlag(e) << "	" << D[e + 1][0] << D[e + 1][1] << "	" << D[e + 2][0] << D[e + 2][1];
-			fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
-		}
-
 		e = af_macDate;
 		if (e > 0) {
 			fout << "(MAC)	" << getFlag(e) << "	" << D[e + 1][0] << D[e + 1][1] << "	" << D[e + 2][0] << D[e + 2][1];
+			fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
+		}
+
+		e = af_infDate;
+		if (e > 0) {
+			fout << "(INF)	" << getFlag(e) << "	" << D[e + 1][0] << D[e + 1][1] << "	" << D[e + 2][0] << D[e + 2][1];
 			fout << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
 		}
 
@@ -3517,49 +3559,38 @@ void widget6::on_pushButton_parser_clicked()
 			// INF SFR data:
 			fout << "--------Main INF SFR data-------" << endl;
 			e = infSFRStart;
-			fout << "Resolution Grade:	";
-			if (DecData[e] == 0x53)
-				fout << "S";
-			if (DecData[e] == 0x41)
-				fout << "A";
-			if (DecData[e] == 0x42)
-				fout << "B";
 
-			fout << endl;
-			e++;
-
-			if (modelSelect < 3)
+			if (modelSelect < 3){
 				SFR_display(27, e);
-			if (modelSelect == 3){
-				SFR_display(26, e);
 				fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
-			//	SFR_display(17, e+0x20);
 			}
+			if (modelSelect == 3 || modelSelect == 3){
+				SFR_display(34,e);
+				fout << "--------Main Dual INF SFR data-------" << endl;
+				e = infSFRStart + 0x38;
+				SFR_display(34, e);
+			}
+
 		}
 
 		if (modelSelect == 3) {
 
-			Test_Date_display(hallDate + 0x1E0, "(Hall)");
-			Test_Date_display(af_infDate + 0x1E0, "(INF)");
-			Test_Date_display(awbDate + 0x1E0, "(AWB)");
-			Test_Date_display(pdafDate + 0x1E0, "(PDAF)");
-			Test_Date_display(oisDate1 + 0x1E0, "(OIS1)");
+			fout << "--------Sub Test Date-------" << endl;
+			Test_Date_display(hallDate + 0x2A, "(Hall)");
+			Test_Date_display(af_macDate + 0x2A, "(MAC)");
+			Test_Date_display(af_infDate + 0x2A, "(INF)");
+			Test_Date_display(awbDate + 0x2A, "(AWB)");
+			Test_Date_display(pdafDate + 0x2A, "(PDAF)");
+			Test_Date_display(oisDate1 + 0x2A, "(OIS1)");
+
 
 			fout << "--------Sub INF SFR data-------" << endl;
-			e = infSFRStart + 0x1E0;
-			fout << "Resolution Grade:	";
-			if (DecData[e] == 0x53)
-				fout << "S";
-			if (DecData[e] == 0x41)
-				fout << "A";
-			if (DecData[e] == 0x42)
-				fout << "B";
-
-			fout << endl;
-
-			e++;
-			SFR_display(26, e);
-			fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
+			e = infSFRStart2;
+			SFR_display(18, e);
+			
+			fout << "--------Sub Dual INF SFR data-------" << endl;
+			e = infSFRStart2 + 0x38;
+			SFR_display(18, e);
 
 		}
 

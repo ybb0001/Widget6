@@ -43,6 +43,8 @@ private slots:
 	void DisplayOutput();
 	void awbGolden();
 	void EEPROM_dumpRead(int f);
+	void Item_Output();
+
 	void gainMapData();
 	void on_pushButton_openBIN_clicked();
 	void on_pushButton_saveBIN_clicked();

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ISM Memory Parser V4_20181215</string>
+   <string>ISM Memory Parser V4_20190131</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -95,7 +95,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -181,7 +181,7 @@ p, li { white-space: pre-wrap; }
        <string>OIS</string>
       </property>
       <property name="checked">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_golden_select">
@@ -242,7 +242,7 @@ p, li { white-space: pre-wrap; }
        <string>SFR</string>
       </property>
       <property name="checked">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QCheckBox" name="checkBox_OC">
@@ -262,6 +262,22 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="checked">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_LSC">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>20</y>
+        <width>41</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>LSC</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -568,8 +584,8 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </widget>
-    <zorder>groupBox_4</zorder>
     <zorder>groupBox</zorder>
+    <zorder>groupBox_4</zorder>
     <zorder>pushButton_golden</zorder>
     <zorder>R_Gr31</zorder>
     <zorder>pushButton_checkSum</zorder>

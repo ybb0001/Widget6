@@ -47,6 +47,7 @@ public:
     QLabel *label_7;
     QCheckBox *checkBox_SFR;
     QCheckBox *checkBox_OC;
+    QCheckBox *checkBox_LSC;
     QPushButton *pushButton_checkSum;
     QTextEdit *ois_version;
     QPushButton *pushButton_ois_repair;
@@ -200,7 +201,7 @@ public:
         checkBox_OIS = new QCheckBox(groupBox);
         checkBox_OIS->setObjectName(QStringLiteral("checkBox_OIS"));
         checkBox_OIS->setGeometry(QRect(10, 80, 61, 19));
-        checkBox_OIS->setChecked(true);
+        checkBox_OIS->setChecked(false);
         pushButton_golden_select = new QPushButton(groupBox);
         pushButton_golden_select->setObjectName(QStringLiteral("pushButton_golden_select"));
         pushButton_golden_select->setGeometry(QRect(350, 60, 81, 30));
@@ -215,12 +216,16 @@ public:
         checkBox_SFR = new QCheckBox(groupBox);
         checkBox_SFR->setObjectName(QStringLiteral("checkBox_SFR"));
         checkBox_SFR->setGeometry(QRect(10, 40, 61, 19));
-        checkBox_SFR->setChecked(true);
+        checkBox_SFR->setChecked(false);
         checkBox_OC = new QCheckBox(groupBox);
         checkBox_OC->setObjectName(QStringLiteral("checkBox_OC"));
         checkBox_OC->setGeometry(QRect(10, 20, 61, 19));
         checkBox_OC->setCheckable(false);
         checkBox_OC->setChecked(false);
+        checkBox_LSC = new QCheckBox(groupBox);
+        checkBox_LSC->setObjectName(QStringLiteral("checkBox_LSC"));
+        checkBox_LSC->setGeometry(QRect(60, 20, 41, 19));
+        checkBox_LSC->setChecked(true);
         pushButton_checkSum = new QPushButton(tab);
         pushButton_checkSum->setObjectName(QStringLiteral("pushButton_checkSum"));
         pushButton_checkSum->setEnabled(false);
@@ -291,8 +296,8 @@ public:
         pushButton_find->setGeometry(QRect(190, 55, 71, 30));
         pushButton_find->setCheckable(false);
         tabWidget->addTab(tab, QString());
-        groupBox_4->raise();
         groupBox->raise();
+        groupBox_4->raise();
         pushButton_golden->raise();
         R_Gr31->raise();
         pushButton_checkSum->raise();
@@ -643,7 +648,7 @@ public:
 
         retranslateUi(EEPROM);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(EEPROM);
@@ -651,7 +656,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM)
     {
-        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V4_20181215", Q_NULLPTR));
+        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V4_20190131", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM", "Input Memory Data", Q_NULLPTR));
         label_2->setText(QApplication::translate("EEPROM", "Output Parse Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM", "Result & logs", Q_NULLPTR));
@@ -669,6 +674,7 @@ public:
         label_7->setText(QApplication::translate("EEPROM", "<html><head/><body><p>R/Gr</p></body></html>", Q_NULLPTR));
         checkBox_SFR->setText(QApplication::translate("EEPROM", "SFR", Q_NULLPTR));
         checkBox_OC->setText(QApplication::translate("EEPROM", "OC", Q_NULLPTR));
+        checkBox_LSC->setText(QApplication::translate("EEPROM", "LSC", Q_NULLPTR));
         pushButton_checkSum->setText(QApplication::translate("EEPROM", "CSum\344\277\256\345\244\215", Q_NULLPTR));
         ois_version->setHtml(QApplication::translate("EEPROM", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
