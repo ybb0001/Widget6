@@ -1,10 +1,15 @@
-﻿生成启动时间为 2019/3/18 22:34:08。
+﻿生成启动时间为 2019/4/18 22:30:05。
      1>项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”在节点 2 上(Build 个目标)。
      1>QtRccSetDependencies:
          "G:\Plug_in\QT\5.8\msvc2015\bin\rcc.exe" --list "Widget6.qrc" > "Release\rcc_list.txt" 2> nul
+       QtWork:
+         Moc'ing Widget6.h...
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IG:\Plug_in\QT\5.8\msvc2015\include /I.\GeneratedFiles\Release /IG:\Plug_in\QT\5.8\msvc2015\include\QtCore /IG:\Plug_in\QT\5.8\msvc2015\include\QtGui /IG:\Plug_in\QT\5.8\msvc2015\include\QtANGLE /IG:\Plug_in\QT\5.8\msvc2015\include\QtWidgets /nologo /W1 /WX- /MP /O2 /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D _AFXDLL /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Widget6.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IG:\Plug_in\QT\5.8\msvc2015\include /I.\GeneratedFiles\Release /IG:\Plug_in\QT\5.8\msvc2015\include\QtCore /IG:\Plug_in\QT\5.8\msvc2015\include\QtGui /IG:\Plug_in\QT\5.8\msvc2015\include\QtANGLE /IG:\Plug_in\QT\5.8\msvc2015\include\QtWidgets /nologo /W1 /WX- /MP /O2 /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D _AFXDLL /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\Release\moc_Widget6.cpp GeneratedFiles\qrc_Widget6.cpp Widget6.cpp main.cpp
+         moc_Widget6.cpp
+         qrc_Widget6.cpp
          Widget6.cpp
+         main.cpp
          _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\Visual Studio 2015\Projects\Widget6\Win32\Release\\Widget6.exe" /NOLOGO /LIBPATH:G:\Plug_in\QT\5.8\msvc2015\lib qtmain.lib Qt5Core.lib Qt5Gui.lib Qt5Widgets.lib dclib.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /PDB:"G:\Visual Studio 2015\Projects\Widget6\Win32\Release\Widget6.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\Visual Studio 2015\Projects\Widget6\Win32\Release\Widget6.lib" /MACHINE:X86 /SAFESEH Release\main.obj
@@ -17,4 +22,4 @@
 
 已成功生成。
 
-已用时间 00:00:14.73
+已用时间 00:00:10.20

@@ -1,4 +1,4 @@
-﻿生成启动时间为 2019/3/18 22:05:25。
+﻿生成启动时间为 2019/4/18 22:19:20。
      1>项目“G:\Visual Studio 2015\Projects\Widget6\Widget6\Widget6.vcxproj”在节点 2 上(Build 个目标)。
      1>QtRccSetDependencies:
          "G:\Plug_in\QT\5.8\msvc2015\bin\rcc.exe" --list "Widget6.qrc" > "Debug\rcc_list.txt" 2> nul
@@ -17,4 +17,4 @@
 
 已成功生成。
 
-已用时间 00:00:04.91
+已用时间 00:00:05.31

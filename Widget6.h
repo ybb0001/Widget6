@@ -17,9 +17,6 @@ enum MyEnum
 	dataReCheck
 };
 
-
-
-
 namespace Ui {
 class EEPROM;
 }
@@ -55,6 +52,9 @@ private slots:
 	void on_pushButton_write_clicked();
 	void on_pushButton_read_all_clicked();
 	void on_pushButton_write_all_clicked();
+	void on_pushButton_saveBIN12_clicked();
+	void on_pushButton_load_lsc_clicked();
+
 
 	void CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, int offset2, QString item);
 

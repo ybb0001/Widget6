@@ -64,6 +64,7 @@ public:
     QLabel *label_13;
     QTextEdit *barCode;
     QPushButton *pushButton_find;
+    QPushButton *pushButton_load_lsc;
     QWidget *tab_2;
     QPushButton *pushButton_read;
     QGroupBox *groupBox_2;
@@ -152,6 +153,7 @@ public:
     QRadioButton *dataType_EEPROM;
     QPushButton *pushButton_openBIN;
     QPushButton *pushButton_saveBIN;
+    QPushButton *pushButton_saveBIN12;
 
     void setupUi(QWidget *EEPROM)
     {
@@ -229,7 +231,7 @@ public:
         pushButton_checkSum = new QPushButton(tab);
         pushButton_checkSum->setObjectName(QStringLiteral("pushButton_checkSum"));
         pushButton_checkSum->setEnabled(false);
-        pushButton_checkSum->setGeometry(QRect(10, 120, 80, 30));
+        pushButton_checkSum->setGeometry(QRect(10, 120, 71, 30));
         pushButton_checkSum->setCheckable(false);
         ois_version = new QTextEdit(tab);
         ois_version->setObjectName(QStringLiteral("ois_version"));
@@ -295,6 +297,11 @@ public:
         pushButton_find->setObjectName(QStringLiteral("pushButton_find"));
         pushButton_find->setGeometry(QRect(190, 55, 71, 30));
         pushButton_find->setCheckable(false);
+        pushButton_load_lsc = new QPushButton(tab);
+        pushButton_load_lsc->setObjectName(QStringLiteral("pushButton_load_lsc"));
+        pushButton_load_lsc->setEnabled(true);
+        pushButton_load_lsc->setGeometry(QRect(90, 120, 71, 30));
+        pushButton_load_lsc->setCheckable(false);
         tabWidget->addTab(tab, QString());
         groupBox->raise();
         groupBox_4->raise();
@@ -310,6 +317,7 @@ public:
         R_Gr51->raise();
         B_Gr51->raise();
         Gr_Gb51->raise();
+        pushButton_load_lsc->raise();
         tab_2 = new QWidget();
         tab_2->setObjectName(QStringLiteral("tab_2"));
         pushButton_read = new QPushButton(tab_2);
@@ -615,7 +623,7 @@ public:
         label_4->setGeometry(QRect(20, 740, 101, 16));
         model = new QTextEdit(EEPROM);
         model->setObjectName(QStringLiteral("model"));
-        model->setGeometry(QRect(130, 730, 41, 31));
+        model->setGeometry(QRect(110, 730, 41, 31));
         model->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         model->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         dataType_EEPROM = new QRadioButton(EEPROM);
@@ -624,12 +632,16 @@ public:
         dataType_EEPROM->setChecked(true);
         pushButton_openBIN = new QPushButton(EEPROM);
         pushButton_openBIN->setObjectName(QStringLiteral("pushButton_openBIN"));
-        pushButton_openBIN->setGeometry(QRect(200, 700, 81, 30));
+        pushButton_openBIN->setGeometry(QRect(180, 700, 71, 30));
         pushButton_openBIN->setCheckable(false);
         pushButton_saveBIN = new QPushButton(EEPROM);
         pushButton_saveBIN->setObjectName(QStringLiteral("pushButton_saveBIN"));
-        pushButton_saveBIN->setGeometry(QRect(200, 730, 81, 30));
+        pushButton_saveBIN->setGeometry(QRect(180, 730, 71, 30));
         pushButton_saveBIN->setCheckable(false);
+        pushButton_saveBIN12 = new QPushButton(EEPROM);
+        pushButton_saveBIN12->setObjectName(QStringLiteral("pushButton_saveBIN12"));
+        pushButton_saveBIN12->setGeometry(QRect(260, 700, 61, 30));
+        pushButton_saveBIN12->setCheckable(false);
         tabWidget->raise();
         input->raise();
         log->raise();
@@ -645,6 +657,7 @@ public:
         dataType_EEPROM->raise();
         pushButton_openBIN->raise();
         pushButton_saveBIN->raise();
+        pushButton_saveBIN12->raise();
 
         retranslateUi(EEPROM);
 
@@ -723,6 +736,7 @@ public:
 "</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">6A1088G1603A</p></body></html>", Q_NULLPTR));
         pushButton_find->setText(QApplication::translate("EEPROM", "Find", Q_NULLPTR));
+        pushButton_load_lsc->setText(QApplication::translate("EEPROM", "Load LSC", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("EEPROM", "Parser", Q_NULLPTR));
         pushButton_read->setText(QApplication::translate("EEPROM", "Read", Q_NULLPTR));
         groupBox_2->setTitle(QApplication::translate("EEPROM", "GPIO", Q_NULLPTR));
@@ -862,6 +876,7 @@ public:
         dataType_EEPROM->setText(QApplication::translate("EEPROM", "EEPROM", Q_NULLPTR));
         pushButton_openBIN->setText(QApplication::translate("EEPROM", "Open Bin", Q_NULLPTR));
         pushButton_saveBIN->setText(QApplication::translate("EEPROM", "Save Bin", Q_NULLPTR));
+        pushButton_saveBIN12->setText(QApplication::translate("EEPROM", "Bin12", Q_NULLPTR));
     } // retranslateUi
 
 };

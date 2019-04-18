@@ -2715,17 +2715,22 @@ void Test_Date_display(int e, string str) {
 }
 
 void OIS_Parse(int S, int E ,string s) {
-	if ( S > 0) {
-		fout << "-------"<< s <<"------" << endl;
+	if (S > 0) {
+		fout << "-------" << s << "------" << endl;
 		int e = S;
-		if (modelSelect != 3)
+		if (modelSelect != 3){
 			e++;
+			fout << "Suppression Ratio X:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+			e += 2;
+			fout << "Suppression Ratio Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+		}
+		else {
+			fout << "Suppression Ratio X:	" <<  DecData[e] <<"."<< DecData[e + 1] << endl;
+			e += 2;
+			fout << "Suppression Ratio Y:	" <<  DecData[e] <<"."<< DecData[e + 1] << endl;
 
-		fout << "Suppression Ratio X:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
 
-		e += 2;
-		fout << "Suppression Ratio Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
-	
+		}
 	}
 }
 
@@ -4306,9 +4311,57 @@ void widget6::on_pushButton_ois_repair_clicked() {
 }
 
 
+void widget6::on_pushButton_saveBIN12_clicked() {
+
+	std::ofstream fout("bin12.bin", std::ios::binary);
+
+	short end = 8272 + 2048;
+	for (int i = 8272; i < end; i++) {
+		fout.write((char*)&DecData[i], sizeof(char));
+	}
+
+	fout.close();
+	ui->log->insertPlainText("dump_eeprom.bin saved. \n");
+
+}
 
 
+void widget6::on_pushButton_load_lsc_clicked() {
 
+	ifstream fin(".//QC_LSC.txt");
+
+	for (int k = 0; k < 4; k++)
+		for (int i = 0; i < 13; i++) 
+			for (int j = 0; j < 17; j++) {
+				fin >> LSC[i][j][k];
+			}
+
+	if (modelSelect == 3 || modelSelect == 4) {
+		int e = lscStart;
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				DecData[e + 4] = 0;
+				for (int k = 0; k < 4; k++) {
+					DecData[e + k]= LSC[i][j][k]%256;
+					getHex(DecData[e + k]);
+					D[e + k][0] = chk[0];
+					D[e + k][1] = chk[1];
+					DecData[e + 4] += ( LSC[i][j][k] / 256) << (2 * (3-k));
+				}
+				getHex(DecData[e + 4]);
+				D[e + 4][0] = chk[0];
+				D[e + 4][1] = chk[1];
+
+				e += 5;
+				if ((i * 17 + j + 1) % 51 == 0) {
+					e++;
+				}
+			}
+	}
+
+	display_EEP();
+
+}
 
 
 //////////////////////////////////////
