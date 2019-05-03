@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ISM Memory Parser V4_20190131</string>
+   <string>ISM Memory Parser V4_20190420</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -1906,7 +1906,7 @@ p, li { white-space: pre-wrap; }
     </rect>
    </property>
    <property name="text">
-    <string>Bin12</string>
+    <string>Bin123</string>
    </property>
    <property name="checkable">
     <bool>false</bool>

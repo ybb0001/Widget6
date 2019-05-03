@@ -669,7 +669,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM)
     {
-        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V4_20190131", Q_NULLPTR));
+        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V4_20190420", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM", "Input Memory Data", Q_NULLPTR));
         label_2->setText(QApplication::translate("EEPROM", "Output Parse Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM", "Result & logs", Q_NULLPTR));
@@ -876,7 +876,7 @@ public:
         dataType_EEPROM->setText(QApplication::translate("EEPROM", "EEPROM", Q_NULLPTR));
         pushButton_openBIN->setText(QApplication::translate("EEPROM", "Open Bin", Q_NULLPTR));
         pushButton_saveBIN->setText(QApplication::translate("EEPROM", "Save Bin", Q_NULLPTR));
-        pushButton_saveBIN12->setText(QApplication::translate("EEPROM", "Bin12", Q_NULLPTR));
+        pushButton_saveBIN12->setText(QApplication::translate("EEPROM", "Bin123", Q_NULLPTR));
     } // retranslateUi
 
 };

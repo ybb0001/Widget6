@@ -2725,9 +2725,9 @@ void OIS_Parse(int S, int E ,string s) {
 			fout << "Suppression Ratio Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
 		}
 		else {
-			fout << "Suppression Ratio X:	" <<  DecData[e] <<"."<< DecData[e + 1] << endl;
+			fout << "Suppression Ratio X:	" <<  (int)DecData[e] <<"."<< (int)DecData[e + 1] << endl;
 			e += 2;
-			fout << "Suppression Ratio Y:	" <<  DecData[e] <<"."<< DecData[e + 1] << endl;
+			fout << "Suppression Ratio Y:	" << (int)DecData[e] <<"."<< (int)DecData[e + 1] << endl;
 
 
 		}
@@ -3569,7 +3569,7 @@ void widget6::on_pushButton_parser_clicked()
 				SFR_display(27, e);
 				fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
 			}
-			if (modelSelect == 3 || modelSelect == 3){
+			if (modelSelect == 3 || modelSelect == 4){
 				SFR_display(34,e);
 				fout << "--------Main Dual INF SFR data-------" << endl;
 				e = infSFRStart + 0x38;
@@ -4313,15 +4313,24 @@ void widget6::on_pushButton_ois_repair_clicked() {
 
 void widget6::on_pushButton_saveBIN12_clicked() {
 
-	std::ofstream fout("bin12.bin", std::ios::binary);
+	std::ofstream fout12("byteResult12.bin", std::ios::binary);
 
 	short end = 8272 + 2048;
 	for (int i = 8272; i < end; i++) {
-		fout.write((char*)&DecData[i], sizeof(char));
+		fout12.write((char*)&DecData[i], sizeof(char));
+	}
+	fout12.close();
+
+	std::ofstream fout23("byteResult23.bin", std::ios::binary);
+
+	end = 8272 + 4096;
+	for (int i = 8272 + 2048; i < end; i++) {
+		fout23.write((char*)&DecData[i], sizeof(char));
 	}
 
-	fout.close();
-	ui->log->insertPlainText("dump_eeprom.bin saved. \n");
+	fout23.close();
+
+	ui->log->insertPlainText("Triple cal bin saved. \n");
 
 }
 
