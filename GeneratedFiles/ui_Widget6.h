@@ -48,6 +48,9 @@ public:
     QCheckBox *checkBox_SFR;
     QCheckBox *checkBox_OC;
     QCheckBox *checkBox_LSC;
+    QCheckBox *checkBox_AF;
+    QTextEdit *Fuse_ID_Length;
+    QLabel *label_14;
     QPushButton *pushButton_checkSum;
     QTextEdit *ois_version;
     QPushButton *pushButton_ois_repair;
@@ -159,7 +162,7 @@ public:
     {
         if (EEPROM->objectName().isEmpty())
             EEPROM->setObjectName(QStringLiteral("EEPROM"));
-        EEPROM->resize(889, 764);
+        EEPROM->resize(889, 768);
         input = new QTextEdit(EEPROM);
         input->setObjectName(QStringLiteral("input"));
         input->setGeometry(QRect(10, 20, 430, 500));
@@ -227,7 +230,19 @@ public:
         checkBox_LSC = new QCheckBox(groupBox);
         checkBox_LSC->setObjectName(QStringLiteral("checkBox_LSC"));
         checkBox_LSC->setGeometry(QRect(60, 20, 41, 19));
-        checkBox_LSC->setChecked(true);
+        checkBox_LSC->setChecked(false);
+        checkBox_AF = new QCheckBox(groupBox);
+        checkBox_AF->setObjectName(QStringLiteral("checkBox_AF"));
+        checkBox_AF->setGeometry(QRect(60, 40, 41, 19));
+        checkBox_AF->setChecked(true);
+        Fuse_ID_Length = new QTextEdit(groupBox);
+        Fuse_ID_Length->setObjectName(QStringLiteral("Fuse_ID_Length"));
+        Fuse_ID_Length->setGeometry(QRect(120, 30, 41, 31));
+        Fuse_ID_Length->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        Fuse_ID_Length->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        label_14 = new QLabel(groupBox);
+        label_14->setObjectName(QStringLiteral("label_14"));
+        label_14->setGeometry(QRect(120, 10, 51, 16));
         pushButton_checkSum = new QPushButton(tab);
         pushButton_checkSum->setObjectName(QStringLiteral("pushButton_checkSum"));
         pushButton_checkSum->setEnabled(false);
@@ -688,6 +703,13 @@ public:
         checkBox_SFR->setText(QApplication::translate("EEPROM", "SFR", Q_NULLPTR));
         checkBox_OC->setText(QApplication::translate("EEPROM", "OC", Q_NULLPTR));
         checkBox_LSC->setText(QApplication::translate("EEPROM", "LSC", Q_NULLPTR));
+        checkBox_AF->setText(QApplication::translate("EEPROM", "AF", Q_NULLPTR));
+        Fuse_ID_Length->setHtml(QApplication::translate("EEPROM", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">22</p></body></html>", Q_NULLPTR));
+        label_14->setText(QApplication::translate("EEPROM", "<html><head/><body><p>Fuse Len</p></body></html>", Q_NULLPTR));
         pushButton_checkSum->setText(QApplication::translate("EEPROM", "CSum\344\277\256\345\244\215", Q_NULLPTR));
         ois_version->setHtml(QApplication::translate("EEPROM", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

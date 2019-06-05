@@ -21,7 +21,7 @@ int LSC[13][17][4];
 int PDgainLeft[13][17], PDgainRight[13][17];
 int GainMostBrightLeft[13][17], GainMostBrightRight[13][17];
 int DCC[6][8], FV[6][8], PD[6][8], PDAF[6][8][10],LRC[2][12][16],DCC_Sony[6][8];
-char chk[2];
+char chk[2], Fuse_ID[22];  int fuse_ID_Length = 22;
 
 // Function Area Start & End address
 int infoStart = 0, infoEnd = 0x1F;
@@ -163,11 +163,11 @@ typedef struct EEPData
 	float total_Weight = 0,awb_Weight = 0xffff;
 	int sfr_Weight = 0xffff ,ois_Weight = 0xffff;
 //	int awb_No = 99999999, sfr_No = 99999999, ois_No = 99999999, total_No = 99999999;
-	char  FuseID[19] = { 0 }; 
+	char  FuseID[22] = { 0 }; 
 	char  Date[11] = { 0 };
 	float R_Gr51 = 0, B_Gr51 = 0, Gr_Gb51 = 0;
 	float R_Gr31 = 0, B_Gr31 = 0, Gr_Gb31 = 0;
-	short inf_SFR[27], mac_SFR[27];
+	short inf_SFR[27], mac_SFR[27], mac=0,inf=0;
 	int SR_X1 = 0xffff, SR_Y1 = 0xffff, SR_X2 = 0xffff, SR_Y2 = 0xffff;
 	char  barCode[13] = { 0 };
 	char  Time[19] = { 0 };
@@ -1701,6 +1701,14 @@ void widget6::findData(){
 }
 
 
+void fuse_ID_out() {
+
+	for (int i = 0; i < fuse_ID_Length; i++) {
+		fout << Fuse_ID[i] ;
+	}
+	fout << "	";
+
+}
 
 void widget6::Item_Output() {
 
@@ -1708,9 +1716,22 @@ void widget6::Item_Output() {
 		lsc_Parse(lscStart, lscEnd);
 	}
 
+	if (afStart> 0 && ui->checkBox_AF->isChecked()) {
+
+		fuse_ID_out();
+		int e = afStart;
+		if (modelSelect == 3 || modelSelect == 4) {
+			//	fout << "AF Start DAC:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+			e = e + 2;
+			fout << DecData[e] + DecData[e + 1] * 256 << "	";
+			e = e + 2;
+			fout << DecData[e] + DecData[e + 1] * 256 << "	";
+		}
+	}
+
+
 
 }
-
 
 
 void widget6::EEPROM_dumpRead(int f) {
@@ -1822,35 +1843,47 @@ void widget6::on_pushButton_dumpRead_clicked()
 	}
 
 	int now = 0, e = 0;
-
+	int skip_line = 0;
 	while (getline(in, src))
 	{
 		now = 0;
 		int len = src.length() - 1;
-		while (now < len) {
-			if (e < EEP_Size) {
+		if (skip_line > 0) {
 
-				if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
-					((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
-						|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	')
-						|| (src[now + 2] == '\n'&&src[now + 5] == '\n'&&src[now + 8] == '\n'))) {
+			for (int i = 0; i < 22; i++) {
+				Fuse_ID[i] = src[15 + i];
+			}
 
-					for (int i = 0; i < 16; i++) {
-						D[e][0] = src[now++];
-						D[e][1] = src[now++];
-						DecData[e] = hex2Dec(e);
-						e++;
-						now++;
+			while (now < len) {
+				if (e < EEP_Size) {
+
+					if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
+						((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
+							|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	')
+							|| (src[now + 2] == '\n'&&src[now + 5] == '\n'&&src[now + 8] == '\n'))) {
+
+						for (int i = 0; i < 16; i++) {
+							D[e][0] = src[now++];
+							D[e][1] = src[now++];
+							DecData[e] = hex2Dec(e);
+							e++;
+							now++;
+						}
+
 					}
-
+					else now++;
 				}
-				else now++;
+				else {
+				//	Item_Output();
+				//	e = 0;
+				}
 			}
-			else {
-				Item_Output();
-				e = 0;
-			}
+			Item_Output();
+			e = 0;
+
 		}
+		fout << endl;
+		skip_line++;
 	}
 	QString strDisplay = "Dump Data Read finished";
 	strDisplay += '\n';
@@ -2737,6 +2770,7 @@ void OIS_Parse(int S, int E ,string s) {
 
 void widget6::on_pushButton_parser_clicked()
 {
+
 	src = ui->input->document()->toPlainText().toLocal8Bit();
 	memset(DecData, 0, sizeof(DecData));
 
@@ -3376,12 +3410,13 @@ void widget6::on_pushButton_parser_clicked()
 		if (AAStart > 0) {
 			// AA test result:
 			fout << "--------AA test result-------" << endl;
+
 			e = AAStart;
 
 			fout << "AA Result flag :	" << getFlag(e) << endl;
 			e++;
 			fout << "Equipment type:	" << D[e][0] << D[e][1];
-			fout << '(';
+			fout << '(';                                                                                      
 
 			if (D[e][1] == 'A')
 				fout << "A_ASM";
@@ -3397,7 +3432,7 @@ void widget6::on_pushButton_parser_clicked()
 			e++;
 			fout << "Manufacture Date:	";
 
-			if (modelSelect == 2|| modelSelect == 3) {
+			if (modelSelect >1 ) {
 				fout << (int)DecData[e] << '-';
 				e++;
 			}
@@ -3410,7 +3445,7 @@ void widget6::on_pushButton_parser_clicked()
 					fout << " ";
 			}
 			e += 3;
-			if (modelSelect == 2|| modelSelect == 3) {
+			if (modelSelect > 1 ) {
 				fout << ':' << (int)DecData[e];
 				e++;
 				fout << ':' << (int)DecData[e] << endl;
@@ -3458,7 +3493,7 @@ void widget6::on_pushButton_parser_clicked()
 
 			e += 4;
 
-			if (modelSelect == 2 || modelSelect == 3) {
+			if (modelSelect >1 ) {
 				fout << "Wide AA AF Code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 				e += 2;
 			}
@@ -3480,6 +3515,22 @@ void widget6::on_pushButton_parser_clicked()
 					fout << c;
 				}
 			}
+
+			if (modelSelect == 3 || modelSelect == 4) {
+				e++;
+				fout << "SEMCO_CPS_RES:	";
+				fout <<D[e][0]<<D[e][1] ;
+				fout << " 00(OK)/0F(NG)"<<endl;
+
+				e++;
+				fout << "SEMCO_CPS_DATA:	";
+				fout << D[e][0] << D[e][1] << D[e+1][0] << D[e+1][1]<< endl;
+				e += 2;
+			}
+
+			if (modelSelect == 3)
+				fout << "K+ flag:	" << D[e][0] << D[e][1];
+
 			fout << endl;
 		}
 
@@ -3574,6 +3625,13 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "--------Main Dual INF SFR data-------" << endl;
 				e = infSFRStart + 0x38;
 				SFR_display(34, e);
+
+				e += 43;
+				fout << "Triple AF Code:	";
+				fout << DecData[e + 1] * 256 + DecData[e];
+
+				e += 2;
+				fout << "AF Code diff NG:	"<< D[e][0] << D[e][1] << endl;
 			}
 
 		}
@@ -3596,6 +3654,13 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "--------Sub Dual INF SFR data-------" << endl;
 			e = infSFRStart2 + 0x38;
 			SFR_display(18, e);
+
+			e += 28;
+			fout << "Triple AF Code:	";
+			fout << DecData[e + 1] * 256 + DecData[e];
+
+			e += 2;
+			fout << "AF Code diff NG:	" << D[e][0] << D[e][1] << endl;
 
 		}
 
