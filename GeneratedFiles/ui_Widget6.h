@@ -370,8 +370,12 @@ public:
         label_8->setGeometry(QRect(200, 0, 41, 16));
         addH_use = new QCheckBox(groupBox_3);
         addH_use->setObjectName(QStringLiteral("addH_use"));
-        addH_use->setGeometry(QRect(120, 60, 91, 19));
+        addH_use->setGeometry(QRect(120, 60, 21, 19));
         addH_use->setChecked(true);
+        addH_use->raise();
+        label_9->raise();
+        eep_size->raise();
+        label_8->raise();
         checkBox_2 = new QCheckBox(tab_2);
         checkBox_2->setObjectName(QStringLiteral("checkBox_2"));
         checkBox_2->setGeometry(QRect(370, 70, 16, 16));
@@ -461,6 +465,39 @@ public:
         checkBox_16->setObjectName(QStringLiteral("checkBox_16"));
         checkBox_16->setGeometry(QRect(50, 70, 16, 16));
         tabWidget->addTab(tab_2, QString());
+        groupBox_3->raise();
+        pushButton_read->raise();
+        groupBox_2->raise();
+        pushButton_write->raise();
+        checkBox_2->raise();
+        pushButton_read_all->raise();
+        checkBox_1->raise();
+        addH->raise();
+        checkBox_15->raise();
+        checkBox_4->raise();
+        readData->raise();
+        checkBox->raise();
+        pushButton_write_all->raise();
+        checkBox_8->raise();
+        writeData->raise();
+        checkBox_17->raise();
+        label_5->raise();
+        checkBox_7->raise();
+        checkBox_12->raise();
+        checkBox_14->raise();
+        label_6->raise();
+        pushButton_GPIO_read->raise();
+        checkBox_9->raise();
+        pushButton_GPIO_write->raise();
+        checkBox_3->raise();
+        slave->raise();
+        checkBox_10->raise();
+        checkBox_11->raise();
+        checkBox_5->raise();
+        checkBox_6->raise();
+        checkBox_13->raise();
+        checkBox_16->raise();
+        addL->raise();
         tab_3 = new QWidget();
         tab_3->setObjectName(QStringLiteral("tab_3"));
         checkBox_36 = new QCheckBox(tab_3);
@@ -676,7 +713,7 @@ public:
 
         retranslateUi(EEPROM);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(EEPROM);
@@ -684,7 +721,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM)
     {
-        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V4_20190420", Q_NULLPTR));
+        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V5_20190807", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM", "Input Memory Data", Q_NULLPTR));
         label_2->setText(QApplication::translate("EEPROM", "Output Parse Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM", "Result & logs", Q_NULLPTR));

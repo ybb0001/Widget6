@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ISM Memory Parser V4_20190420</string>
+   <string>ISM Memory Parser V5_20190807</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -95,7 +95,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -823,7 +823,7 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>120</x>
         <y>60</y>
-        <width>91</width>
+        <width>21</width>
         <height>19</height>
        </rect>
       </property>
@@ -834,6 +834,10 @@ p, li { white-space: pre-wrap; }
        <bool>true</bool>
       </property>
      </widget>
+     <zorder>addH_use</zorder>
+     <zorder>label_9</zorder>
+     <zorder>eep_size</zorder>
+     <zorder>label_8</zorder>
     </widget>
     <widget class="QCheckBox" name="checkBox_2">
      <property name="geometry">
@@ -1227,6 +1231,39 @@ p, li { white-space: pre-wrap; }
       <string/>
      </property>
     </widget>
+    <zorder>groupBox_3</zorder>
+    <zorder>pushButton_read</zorder>
+    <zorder>groupBox_2</zorder>
+    <zorder>pushButton_write</zorder>
+    <zorder>checkBox_2</zorder>
+    <zorder>pushButton_read_all</zorder>
+    <zorder>checkBox_1</zorder>
+    <zorder>addH</zorder>
+    <zorder>checkBox_15</zorder>
+    <zorder>checkBox_4</zorder>
+    <zorder>readData</zorder>
+    <zorder>checkBox</zorder>
+    <zorder>pushButton_write_all</zorder>
+    <zorder>checkBox_8</zorder>
+    <zorder>writeData</zorder>
+    <zorder>checkBox_17</zorder>
+    <zorder>label_5</zorder>
+    <zorder>checkBox_7</zorder>
+    <zorder>checkBox_12</zorder>
+    <zorder>checkBox_14</zorder>
+    <zorder>label_6</zorder>
+    <zorder>pushButton_GPIO_read</zorder>
+    <zorder>checkBox_9</zorder>
+    <zorder>pushButton_GPIO_write</zorder>
+    <zorder>checkBox_3</zorder>
+    <zorder>slave</zorder>
+    <zorder>checkBox_10</zorder>
+    <zorder>checkBox_11</zorder>
+    <zorder>checkBox_5</zorder>
+    <zorder>checkBox_6</zorder>
+    <zorder>checkBox_13</zorder>
+    <zorder>checkBox_16</zorder>
+    <zorder>addL</zorder>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
