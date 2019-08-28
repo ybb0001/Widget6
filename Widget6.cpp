@@ -38,7 +38,6 @@ int lscStart = 0x8F, lscEnd = 0x04E6;
 int pdafGainStart = 0x04EF, pdafGainEnd = 0x0995;
 int DCCStart = 0x086C, DCCEnd = 0 ,SonyDCCStart = 0x0CCA, SonyDCCEnd = 0x0D2D;
 int FVStart = 0x08D5, PDStart = 0x0935, LRCStart = 0x0AFA, LRCEnd = 0x0D2B;
-int focusMapStart = 0, focusMapEnd = 0, lscLSIStart = 0, lscLSIEnd = 0, pdafLSISatrt = 0, pdafLSIEnd=0;
 int oisStart1 = 0x09A0, oisEnd1 = 0x09B1;
 int oisStart2 = 0x09B4, oisEnd2 = 0x09BD;
 int distortiomStart = 0x0D90, distortiomEnd = 0x0E91;
@@ -54,6 +53,10 @@ int afDriftStart = 0x12CB, afDriftEnd = 0x12EF;
 int confidenceStart = 0x1300, confidenceEnd = 0x16C0;
 int pdaf_max_roiStart = 0x16D0, pdaf_max_roiEnd = 0x1A48;
 int totalCheckSum = 0x1A50;
+//LSI
+int focusMapStart = 3200, focusMapEnd = 3311, headerLSIStart = 0, headerLSIEnd = 0;
+int moduleLSIStart = 0, moduleLSIEnd = 0, awbLSIStart = 0, awbLSIEnd = 0, afLSIStart = 0, afLSIEnd = 0;
+int lscLSIStart = 0, lscLSIEnd = 0, pdafLSISatrt = 0, pdafLSIEnd = 0, oisLSIStart = 0, oisLSIEnd = 0;
 
 int AAStart = 0x1E90;
 
@@ -325,7 +328,6 @@ LPTSTR lptstr2int(int v) {
 }
 
 
-
 unsigned char widget6::my_DC_I2cRead(unsigned char s, int hi, int lo) {
 
 	Value_I2cStart = DC_I2cStart(0, 0);
@@ -400,16 +402,7 @@ void load_EEPROM_Address() {
 	
 	DCCStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("DCCStart"), DCCStart, CA2CT(EEPROM_Map.c_str()));
 	DCCEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("DCCEnd"), DCCEnd, CA2CT(EEPROM_Map.c_str()));
-	/////////////////////////
-	focusMapStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("focusMapStart"), focusMapStart, CA2CT(EEPROM_Map.c_str()));
-	focusMapEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("focusMapEnd"), focusMapEnd, CA2CT(EEPROM_Map.c_str()));
 
-	lscLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscLSIStart"), lscLSIStart, CA2CT(EEPROM_Map.c_str()));
-	lscLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscLSIEnd"), lscLSIEnd, CA2CT(EEPROM_Map.c_str()));
-
-	pdafLSISatrt = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSISatrt"), pdafLSISatrt, CA2CT(EEPROM_Map.c_str()));
-	pdafLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSIEnd"), pdafLSIEnd, CA2CT(EEPROM_Map.c_str()));
-	/////////////////////////////
 	FVStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("FVStart"), PDStart, CA2CT(EEPROM_Map.c_str()));
 	PDStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("PDStart"), PDStart, CA2CT(EEPROM_Map.c_str()));
 
@@ -444,7 +437,32 @@ void load_EEPROM_Address() {
 
 	totalCheckSum = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("totalCheckSum"), totalCheckSum, CA2CT(EEPROM_Map.c_str()));
 
-	// Semco self area
+	focusMapStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("focusMapStart"), focusMapStart, CA2CT(EEPROM_Map.c_str()));
+	focusMapEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("focusMapEnd"), focusMapEnd, CA2CT(EEPROM_Map.c_str()));
+
+	/////////////////////////V983-LSI	
+	headerLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("headerLSIStart"), headerLSIStart, CA2CT(EEPROM_Map.c_str()));
+	headerLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("headerLSIEnd"), headerLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	moduleLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("moduleLSIStart"), moduleLSIStart, CA2CT(EEPROM_Map.c_str()));
+	moduleLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("moduleLSIEnd"), moduleLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	awbLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbLSIStart"), awbLSIStart, CA2CT(EEPROM_Map.c_str()));
+	awbLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbLSIEnd"), awbLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	afLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("afLSIStart"), afLSIStart, CA2CT(EEPROM_Map.c_str()));
+	afLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("afLSIEnd"), afLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	lscLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscLSIStart"), lscLSIStart, CA2CT(EEPROM_Map.c_str()));
+	lscLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscLSIEnd"), lscLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	pdafLSISatrt = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSISatrt"), pdafLSISatrt, CA2CT(EEPROM_Map.c_str()));
+	pdafLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSIEnd"), pdafLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	oisLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("oisLSISatrt"), oisLSIStart, CA2CT(EEPROM_Map.c_str()));
+	oisLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("oisLSIEnd"), oisLSIEnd, CA2CT(EEPROM_Map.c_str()));
+
+	////////////// Semco self area
 	AAStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("AAStart"), AAStart, CA2CT(EEPROM_Map.c_str()));
 	hallDate = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("hallDate"), hallDate, CA2CT(EEPROM_Map.c_str()));
 	af_infDate = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("af_infDate"), af_infDate, CA2CT(EEPROM_Map.c_str()));
@@ -513,12 +531,30 @@ void save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("focusMapStart"), lptstr2int(focusMapStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("focusMapEnd"), lptstr2int(focusMapEnd), CA2CT(EEPROM_Map.c_str()));
 
+	//////////////////  for LSI
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("headerLSIStart"), lptstr2int(headerLSIStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("headerLSIEnd"), lptstr2int(headerLSIEnd), CA2CT(EEPROM_Map.c_str()));
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("moduleLSIStart"), lptstr2int(moduleLSIStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("moduleLSIEnd"), lptstr2int(moduleLSIEnd), CA2CT(EEPROM_Map.c_str()));
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbLSIStart"), lptstr2int(awbLSIStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbLSIEnd"), lptstr2int(awbLSIEnd), CA2CT(EEPROM_Map.c_str()));
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("afLSIStart"), lptstr2int(afLSIStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("afLSIEnd"), lptstr2int(afLSIEnd), CA2CT(EEPROM_Map.c_str()));
+
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscLSIStart"), lptstr2int(lscLSIStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscLSIEnd"), lptstr2int(lscLSIEnd), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafLSISatrt"), lptstr2int(pdafLSISatrt), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafLSIEnd"), lptstr2int(pdafLSIEnd), CA2CT(EEPROM_Map.c_str()));
-	/////////////////////////////////
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("oisLSISatrt"), lptstr2int(oisLSIStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("oisLSIEnd"), lptstr2int(oisLSIEnd), CA2CT(EEPROM_Map.c_str()));
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("oisStart1"), lptstr2int(oisStart1), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("oisEnd1"), lptstr2int(oisEnd1), CA2CT(EEPROM_Map.c_str()));
 
@@ -1169,6 +1205,48 @@ void widget6::on_pushButton_GPIO_All_clicked() {
 /////////////////////////////
 
 */
+void char_Out(int e) {
+
+	int tmp = DecData[e];
+	if (tmp > 0x7F)
+		tmp = tmp - 0x100;
+	fout << tmp << endl;
+}
+
+
+void short_Out(int e, bool HL) {
+
+	int tmp = 0;
+	if (HL) {
+		tmp = DecData[e] * 256 + DecData[e + 1];
+	}
+	else {
+		tmp = DecData[e + 1] * 256 + DecData[e];
+	}
+	if (tmp > 0x7FFF)
+		tmp = tmp - 65536;
+
+	fout << tmp << endl;
+
+}
+void gyro_Out(int e, bool HL) {
+
+	unsigned int tmp = 0;
+	if (HL) {
+		for (int i = 0; i <4; i++) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+	}
+	else {
+		for (int i = 3; i >= 0; i--) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+	}
+	fout << (float)tmp / 0x80000000 << endl;
+
+}
 
 void int_Out(int e,bool HL) {
 	
@@ -1183,27 +1261,6 @@ void int_Out(int e,bool HL) {
 	}
 	else {
 		for (int i = 3; i >= 0; i--) {
-			tmp *= 256;
-			tmp += DecData[e + i];
-		}
-	}
-	fout << *fp << endl;
-}
-
-
-void short_Out(int e, bool HL) {
-
-	unsigned short tmp = 0;
-	short* fp = (short*)&tmp;
-
-	if (HL) {
-		for (int i = 0; i <2; i++) {
-			tmp *= 256;
-			tmp += DecData[e + i];
-		}
-	}
-	else {
-		for (int i = 1; i >= 0; i--) {
 			tmp *= 256;
 			tmp += DecData[e + i];
 		}
@@ -2134,7 +2191,7 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 		}
 
 		fout << chk[0] << chk[1] << "	";
-		if (modelSelect > 2&& modelSelect<5)
+		if ((modelSelect > 2&& modelSelect<5)|| checkSumStart>checkSumEnd)
 			fout << getFlag(checkSumEnd - 1) << "	" << endl;
 		else
 			fout << getFlag(checkSumStart) << "	" << endl;
@@ -2316,77 +2373,78 @@ void OIS_Hall_Parse(int S, int E) {
 			tmp += DecData[e + i];
 		}
 		//	float* fp = (float*)&tmp;
+		e = e + 2;
 		fout << "OIS Hall X max Before:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 		fout << "OIS Hall X min Before:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 		fout << "OIS Hall X max After:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 		fout << "OIS Hall X min After:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "OIS Hall Y max Before:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 		fout << "OIS Hall Y min Before:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 		fout << "OIS Hall Y max After:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 		fout << "OIS Hall Y min After:	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "OIS Hall Bias X :	";
-		int_Out(e, false);
-		e = e + 4;
+		short_Out(e, false);
+		e = e + 3;
 		fout << "OIS Hall Offset X :	";
-		int_Out(e, false);
-		e = e + 4;
+		char_Out(e);
+		e = e + 5;
 
 		fout << "OIS Hall Bias Y :	";
-		int_Out(e, false);
-		e = e + 4;
+		short_Out(e, false);
+		e = e + 3;
 		fout << "OIS Hall Offset Y :	";
-		int_Out(e, false);
-		e = e + 4;
+		char_Out(e);
+		e = e + 5;
 
 		fout << "Loop Gain X :	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "Loop Gain Y :	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "Neutral Center X :	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "Neutral Center Y :	";
-		int_Out(e, false);
-		e = e + 4;
+		short_Out(e, false);
+		e = e + 10;
 
 		fout << "Gyro Offset X :	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "Gyro Offset Y :	";
-		int_Out(e, false);
+		short_Out(e, false);
 		e = e + 4;
 
 		fout << "Gyro Gain X :	";
-		int_Out(e, false);
+		gyro_Out(e, false);
 		e = e + 4;
 
 		fout << "Gyro Gain Y :	";
-		int_Out(e, false);
-		e = e + 4;
+		gyro_Out(e, false);
+
 	}
 
 	if (modelSelect == 5) {
@@ -3003,6 +3061,92 @@ void OIS_Parse(int S, int E ,string s) {
 }
 
 
+void LSI_AF_Parse(int S, int E, string s) {
+	if (S > 0) {
+		int e = S;
+		fout << "LSI_AF Infinity Distance:	" << 256 * DecData[e+1] + DecData[e] << endl;
+		e += 4;
+		fout << "LSI_AF Infinity Position:	" << 256 * DecData[e+1] + DecData[e] << endl;
+		e += 4;
+		fout << "LSI_AF Middle Distance:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 4;
+		fout << "LSI_AF Middle Position:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 4;
+		fout << "LSI_AF Macro Distance:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 4;
+		fout << "LSI_AF Macro Position:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 4;
+		fout << "LSI_AF Focal length:	" << 0x1000000 * DecData[e + 3] + 0x10000 * DecData[e + 2]+ 256 * DecData[e + 1] + DecData[e] << endl;
+
+
+	}
+}
+
+
+void LSI_OIS_Parse(int S, int E, string s) {
+	if (S > 0) {
+		unsigned int tmp = 0;
+		float* fp = (float*)&tmp;
+		int e = S;
+		fout << "------- LSI_OIS -------" << endl;
+		fout << "Gyro Offset X value:	"; 
+		short_Out(e,0) ;
+		e += 2;
+		fout << "Gyro Offset Y value:	";
+		short_Out(e, 0);
+		e += 2;
+
+		tmp = 0;
+		for (int i = 3; i >=0; i--)
+			tmp = tmp * 256 + DecData[e + i];
+		fout << "Gyro Gain X value:	" << *fp << endl;
+		e += 4;
+
+		tmp = 0;
+		for (int i = 3; i >= 0; i--)
+			tmp = tmp * 256 + DecData[e + i];
+		fout << "Gyro Gain Y value:	" << *fp << endl;
+		e += 4;
+
+		fout << "X Mechanical Center:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 2;
+		fout << "Y Mechanical Center:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 2;
+		fout << "X Hall Bias:	";
+		char_Out(e);
+		e++;
+		fout << "Y Hall Bias:	";
+		char_Out(e);
+		e++;
+		fout << "Hall Gain X value:	0x";
+		for (int i = 3; i >= 0; i--)
+			fout << D[e + i][0] << D[e + i][1];
+		e += 4;
+		fout << "Hall Gain Y value:	0x";
+		for (int i = 3; i >= 0; i--)
+			fout << D[e + i][0] << D[e + i][1];
+		e += 4;
+		fout << "X Hall Offset:	";
+		short_Out(e, 0);
+		e += 2;
+		fout << "Y Hall Offset:	";
+		short_Out(e, 0);
+		e += 2;
+		fout << "Hall X Max Value:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 2;
+		fout << "Hall Y Max Value:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 2;
+		fout << "Hall X Min Value:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 2;
+		fout << "Hall Y Min Value:	" << 256 * DecData[e + 1] + DecData[e] << endl;
+		e += 2;
+		fout << "Suppression Ratio X1:	" << DecData[e ] + DecData[e+1]/100 << endl;
+		e += 2;
+		fout << "Suppression Ratio Y1:	" << DecData[e] + DecData[e + 1] / 100 << endl;
+	}
+}
+
+
 void widget6::on_pushButton_parser_clicked()
 {
 
@@ -3124,8 +3268,14 @@ void widget6::on_pushButton_parser_clicked()
 		if (modelSelect == 5) {
 			// V983 LSI checksum
 			CheckSum_Check(focusMapStart, focusMapEnd, 1, 0, "Focusmap");
-			CheckSum_Check(lscLSIStart, lscLSIEnd, 1, 0, "LSI_LSC");
-			CheckSum_Check(pdafLSISatrt, pdafLSIEnd, 1, 0, "LSI_PDAF");
+
+			CheckSum_Check(headerLSIStart, headerLSIEnd, -52, 0, "LSI_LSC");
+			CheckSum_Check(moduleLSIStart, moduleLSIEnd, -58, 0, "LSI_LSC");
+			CheckSum_Check(awbLSIStart, awbLSIEnd, -102,0, "LSI_LSC");
+			CheckSum_Check(afLSIStart, afLSIEnd, -32,0, "LSI_LSC");
+			CheckSum_Check(lscLSIStart, lscLSIEnd, -5844, 0, "LSI_LSC");
+			CheckSum_Check(pdafLSISatrt, pdafLSIEnd, -1744, 0, "LSI_PDAF");
+			CheckSum_Check(oisLSIStart, oisLSIEnd, -82, 0, "LSI_PDAF");
 		}
 
 		/////////////////////////////////////////////////////////////
@@ -3403,6 +3553,9 @@ void widget6::on_pushButton_parser_clicked()
 		}
 
 		OIS_Parse(oisStart2,0,"Main_OIS_SR");
+		LSI_AF_Parse(afLSIStart, afLSIEnd, "LSI_AF");
+		LSI_OIS_Parse(oisLSIStart, oisLSIEnd, "LSI_AF");
+
 
 		if (modelSelect == 3) {
 			OIS_Parse( oisStart2+4, 0 , "Sub_OIS_SR");
