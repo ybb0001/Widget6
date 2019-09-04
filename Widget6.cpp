@@ -56,7 +56,7 @@ int totalCheckSum = 0x1A50;
 //LSI
 int focusMapStart = 3200, focusMapEnd = 3311, headerLSIStart = 0, headerLSIEnd = 0;
 int moduleLSIStart = 0, moduleLSIEnd = 0, awbLSIStart = 0, awbLSIEnd = 0, afLSIStart = 0, afLSIEnd = 0;
-int lscLSIStart = 0, lscLSIEnd = 0, pdafLSISatrt = 0, pdafLSIEnd = 0, oisLSIStart = 0, oisLSIEnd = 0;
+int lscLSIStart = 0, lscLSIEnd = 0, pdafLSIStart = 0, pdafLSIEnd = 0, oisLSIStart = 0, oisLSIEnd = 0;
 
 int AAStart = 0x1E90;
 
@@ -456,10 +456,10 @@ void load_EEPROM_Address() {
 	lscLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscLSIStart"), lscLSIStart, CA2CT(EEPROM_Map.c_str()));
 	lscLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscLSIEnd"), lscLSIEnd, CA2CT(EEPROM_Map.c_str()));
 
-	pdafLSISatrt = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSISatrt"), pdafLSISatrt, CA2CT(EEPROM_Map.c_str()));
+	pdafLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSIStart"), pdafLSIStart, CA2CT(EEPROM_Map.c_str()));
 	pdafLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("pdafLSIEnd"), pdafLSIEnd, CA2CT(EEPROM_Map.c_str()));
 
-	oisLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("oisLSISatrt"), oisLSIStart, CA2CT(EEPROM_Map.c_str()));
+	oisLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("oisLSIStart"), oisLSIStart, CA2CT(EEPROM_Map.c_str()));
 	oisLSIEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("oisLSIEnd"), oisLSIEnd, CA2CT(EEPROM_Map.c_str()));
 
 	////////////// Semco self area
@@ -547,7 +547,7 @@ void save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscLSIStart"), lptstr2int(lscLSIStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscLSIEnd"), lptstr2int(lscLSIEnd), CA2CT(EEPROM_Map.c_str()));
 
-	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafLSISatrt"), lptstr2int(pdafLSISatrt), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafLSISatrt"), lptstr2int(pdafLSIStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafLSIEnd"), lptstr2int(pdafLSIEnd), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("oisLSISatrt"), lptstr2int(oisLSIStart), CA2CT(EEPROM_Map.c_str()));
@@ -736,7 +736,6 @@ widget6::widget6(QWidget *parent) :
 	ui->setupUi(this);
 
 	ui->output->insertPlainText("Please Select Model: \n");
-	ui->output->insertPlainText("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 	ifstream in(".\\Setting\\EEPROM_Tool_Setting.ini");
 	ostringstream outStr;
 	outStr << in.rdbuf();
@@ -2155,11 +2154,10 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 
 	if (checkSumEnd > 0) {
 		int tmp = 0, end = checkSumEnd, start = checkSumStart;
-		if (modelSelect > 2) {
+		if (modelSelect == 3 || modelSelect == 4|| offset1 <0 ){
 			end = checkSumEnd - offset1;
 			start = start + offset2;
 		}
-
 		for (int i = start; i < end; i++)
 			tmp += DecData[i];
 
@@ -2169,6 +2167,8 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 		tmp %= 255;
 		if (tmp == 0)
 			tmp = 255;
+		if (offset1 < 0)
+			tmp++;
 		getHex(tmp);
 		if (tmp % 255 != DecData[checkSumEnd] % 255) {
 
@@ -2488,8 +2488,9 @@ void OIS_Hall_Parse(int S, int E) {
 		fout << "Hall_Min_X:	" << DecData[e] * 256 + DecData[e + 1] << endl;
 		fout << "Hall_Min_Y:	" << DecData[e + 2] * 256 + DecData[e + 3] << endl;
 		e += 4;
-		fout << "Hall_Min_X:	" << DecData[e]+DecData[e + 1]/100 << endl;
-		fout << "Hall_Min_Y:	" << DecData[e + 2] + DecData[e + 3]/100 << endl;
+		fout << "SR_X:	" << DecData[e] + (float)(DecData[e + 1])/100 << endl;
+		fout << "SR_Y:	" << DecData[e + 2] + (float)(DecData[e + 3]) /100 << endl;
+
 	}
 
 	fout << endl;
@@ -3208,27 +3209,34 @@ void widget6::on_pushButton_parser_clicked()
 				TCSum += DecData[i];
 		}
 
-		CheckSum_Check(infoStart, infoEnd, 30, 0, "Info");
-		CheckSum_Check(fuseIDStart, fuseIDEnd, 1, 0, "fuseID");
+		if (modelSelect == 3|| modelSelect == 4) {
+			CheckSum_Check(infoStart, infoEnd, 30, 0, "Info");
+		}
 
+		if (modelSelect < 3 || modelSelect == 5) {
+			CheckSum_Check(infoStart, infoEnd, 0, 0, "Info");
+		}
+
+		if (modelSelect == 6) {
+			CheckSum_Check(infoStart, infoEnd, 1, 0, "Info");
+		}
+
+		CheckSum_Check(fuseIDStart, fuseIDEnd, 1, 0, "fuseID");
 		CheckSum_Check(serialNumberStart, serialNumberEnd, 1, 0, "QRcode");
+		
 
 		if (modelSelect > 2 && modelSelect < 5) {
 			CheckSum_Check(awbStart4000, awbEnd4000, 5, 0, "4000K");
-		//	if(modelSelect==3)
-				CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "3100K");
-	//		if (modelSelect == 4)
-	//			CheckSum_Check(awbStart3100-2, awbEnd3100, 6, 0, "3100K");
-
+			CheckSum_Check(awbStart3100, awbEnd3100, 6, 0, "3100K");
 			CheckSum_Check(awbLightStart, awbLightEnd, 5, 0, "Light5");
 			CheckSum_Check(awbLightStart4000, awbLightEnd4000, 3, 0, "Light4");
 			CheckSum_Check(awbLightStart3100, awbLightEnd3100, 3, 0, "Light3");
 			CheckSum_Check(AFhallStart, AFhallEnd, 1, 0, "AFHall");
 		}
-		else {
+
+		if (modelSelect==5) {
 			CheckSum_Check(awbStart, awbEnd, 1, 0, "AWBCal");
 		}
-
 
 		CheckSum_Check(hallStart, hallEnd, 1, 0, "OISHall");
 		CheckSum_Check(afDriftStart, afDriftEnd, 1, 0, "Drift");
@@ -3269,13 +3277,15 @@ void widget6::on_pushButton_parser_clicked()
 			// V983 LSI checksum
 			CheckSum_Check(focusMapStart, focusMapEnd, 1, 0, "Focusmap");
 
-			CheckSum_Check(headerLSIStart, headerLSIEnd, -52, 0, "LSI_LSC");
-			CheckSum_Check(moduleLSIStart, moduleLSIEnd, -58, 0, "LSI_LSC");
-			CheckSum_Check(awbLSIStart, awbLSIEnd, -102,0, "LSI_LSC");
-			CheckSum_Check(afLSIStart, afLSIEnd, -32,0, "LSI_LSC");
-			CheckSum_Check(lscLSIStart, lscLSIEnd, -5844, 0, "LSI_LSC");
-			CheckSum_Check(pdafLSISatrt, pdafLSIEnd, -1744, 0, "LSI_PDAF");
-			CheckSum_Check(oisLSIStart, oisLSIEnd, -82, 0, "LSI_PDAF");
+			fout << "~~~~~~~~ LSI CheckSum ~~~~~~~~" << endl;
+
+			CheckSum_Check(headerLSIStart, headerLSIEnd, -52, 0, "head");
+			CheckSum_Check(moduleLSIStart, moduleLSIEnd, -58, 0, "Module");
+			CheckSum_Check(awbLSIStart, awbLSIEnd, -102,0, "AWB");
+			CheckSum_Check(afLSIStart, afLSIEnd, -32,0, "LSI_AF");
+			CheckSum_Check(lscLSIStart, lscLSIEnd, -5844, 0, "LSC");
+			CheckSum_Check(pdafLSIStart, pdafLSIEnd, -1744, 0, "PDAF");
+			CheckSum_Check(oisLSIStart, oisLSIEnd, -52, 0, "OIS");
 		}
 
 		/////////////////////////////////////////////////////////////
@@ -4683,26 +4693,29 @@ void widget6::on_pushButton_openBIN_clicked() {
 
 void widget6::on_pushButton_saveBIN_clicked() {
 
-	src = ui->input->document()->toPlainText().toLocal8Bit();
-	int now = 0, e = 0, len = src.length() - 1;
-	
-	if(modelSelect==3)
-		EEP_Size=16384;
+	if (modelSelect == 3)
+		EEP_Size = 16384;
 
-	while (now < len && e < EEP_Size) {
-		if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
-			((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
-				|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	'))) {
+	if (!ui->pushButton_parser->isEnabled()){
 
-			for (int i = 0; i < 16; i++) {
-				D[e][0] = src[now++];
-				D[e][1] = src[now++];
-				DecData[e] = hex2Dec(e);
-				e++;
-				now++;
+		src = ui->input->document()->toPlainText().toLocal8Bit();
+		int now = 0, e = 0, len = src.length() - 1;
+
+		while (now < len && e < EEP_Size) {
+			if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
+				((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
+					|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	'))) {
+
+				for (int i = 0; i < 16; i++) {
+					D[e][0] = src[now++];
+					D[e][1] = src[now++];
+					DecData[e] = hex2Dec(e);
+					e++;
+					now++;
+				}
 			}
+			else now++;
 		}
-		else now++;
 	}
 
 	std::ofstream fout("Data.bin", std::ios::binary);
