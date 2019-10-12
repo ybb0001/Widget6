@@ -30,7 +30,7 @@ int productDateStart = 0x03, productDateEnd = 0x44;
 int serialNumberStart = 0x45, serialNumberEnd = 0x65;
 
 int hallStart = 0x30, hallEnd = 0x3F, AFhallStart = 0x100, AFhallEnd= 0x109;
-int oisFW = 0x85, DualAWBStart = 0x0D40, DualAWBEnd = 0x0D81;
+int oisFW = 0x85, dualAWBStart = 0x0D40, dualAWBEnd = 0x0D81;
 int afStart = 0x40, afEnd = 0x56;
 int awbStart = 0x5F, awbEnd = 0x85, awbStart3100 = 0x002F, awbEnd3100 = 0x0044,awbStart4000 = 0x0051, awbEnd4000 = 0x0066;
 int awbLightStart = 0x45, awbLightEnd = 0x4E, awbLightStart4000 = 0x61, awbLightEnd4000 = 0x68, awbLightStart3100 = 0x49, awbLightEnd3100 = 0x50;
@@ -40,7 +40,7 @@ int DCCStart = 0x086C, DCCEnd = 0 ,SonyDCCStart = 0x0CCA, SonyDCCEnd = 0x0D2D;
 int FVStart = 0x08D5, PDStart = 0x0935, LRCStart = 0x0AFA, LRCEnd = 0x0D2B;
 int oisStart1 = 0x09A0, oisEnd1 = 0x09B1;
 int oisStart2 = 0x09B4, oisEnd2 = 0x09BD;
-int distortiomStart = 0x0D90, distortiomEnd = 0x0E91;
+int distortionStart = 0x0D90, distortionEnd = 0x0E91;
 
 int DAStart = 0x09C0, DAEnd = 0x09C3;
 int dualCalStart = 0x09D0, dualCalEnd = 0x11EC;
@@ -84,33 +84,6 @@ int MasterSPLStart = 0x1FB0;
 //Dual_INF_SFR
 int Dual_INF_SFRStart = 0x1FD0;
 
-//OTP addressMap
-int OTP_user_Start = 0x0400;
-int OTP_info_flag = 0x0400;
-int OTP_info_start[3] = { 0x0401,0x0420,0x043F };
-int OTP_info_end[3] = { 0x041F,0x043E,0x045D };
-
-int OTP_awb_flag = 0x0470;
-int OTP_awb_start[3] = { 0x0471,0x048B,0x04A5 };
-int OTP_awb_end[3] = { 0x048A,0x04A4,0x04BE };
-
-int OTP_lsc_flag = 0x04C0;
-int OTP_lsc_start[3] = { 0x04C1,0x0918,0x0D6E };
-int OTP_lsc_end[3] = { 0x0917,0x0D6E,0x11C5 };
-
-int OTP_checkSum = 0x11D0;
-//OTP SEMCO
-int OTP_FF_cal_flag = 0x12E0;
-int OTP_FF_cal_start[3] = { 0x12E1,0x12E7,0x12ED };
-
-int OTP_final_FF_cal_flag = 0x1300;
-int OTP_final_FF_cal_start[3] = { 0x1301,0x1308,0x130F };
-
-int OTP_lsc_cal_flag = 0x1320;
-int OTP_SFR_focus_start[3] = { 0x1340,0x1353,0x1366 };
-int OTP_SFR_final_start[3] = { 0x1380,0x1393,0x13A6 };
-int OTP_SFR_dual_start[3] = { 0x13C0,0x13D3,0x13E6 };
-int OTP_master_flag = 0x1400;
 float R_Gr51 = 0, B_Gr51 = 0, Gr_Gb51 = 0;
 float R_Gr31 = 0, B_Gr31 = 0, Gr_Gb31 = 0;
 int cnt1 = 0, cnt2 = 0, gainSpec = 550;
@@ -381,6 +354,9 @@ void load_EEPROM_Address() {
 	serialNumberStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("serialNumberStart"), infoEnd, CA2CT(EEPROM_Map.c_str()));
 	serialNumberEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("serialNumberEnd"), infoEnd, CA2CT(EEPROM_Map.c_str()));
 
+	AFhallStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("AFhallStart"), AFhallStart, CA2CT(EEPROM_Map.c_str()));
+	AFhallEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("AFhallEnd"), AFhallEnd, CA2CT(EEPROM_Map.c_str()));
+
 	hallStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("hallStart"), hallStart, CA2CT(EEPROM_Map.c_str()));
 	hallEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("hallEnd"), hallEnd, CA2CT(EEPROM_Map.c_str()));
 	oisFW = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("oisFW"), 0, CA2CT(EEPROM_Map.c_str()));
@@ -393,6 +369,9 @@ void load_EEPROM_Address() {
 	awbEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbEnd"), awbEnd, CA2CT(EEPROM_Map.c_str()));
 	awbStart4000 = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbStart4"), awbStart, CA2CT(EEPROM_Map.c_str()));
 	awbEnd4000 = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("awbEnd4"), awbEnd, CA2CT(EEPROM_Map.c_str()));
+	dualAWBStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("dualAWBStart"), dualAWBStart, CA2CT(EEPROM_Map.c_str()));
+	dualAWBEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("dualAWBEnd"), dualAWBEnd, CA2CT(EEPROM_Map.c_str()));
+
 
 	lscStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscStart"), lscStart, CA2CT(EEPROM_Map.c_str()));
 	lscEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("lscEnd"), lscEnd, CA2CT(EEPROM_Map.c_str()));
@@ -402,6 +381,12 @@ void load_EEPROM_Address() {
 	
 	DCCStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("DCCStart"), DCCStart, CA2CT(EEPROM_Map.c_str()));
 	DCCEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("DCCEnd"), DCCEnd, CA2CT(EEPROM_Map.c_str()));
+
+	LRCStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("LRCStart"), LRCStart, CA2CT(EEPROM_Map.c_str()));
+	LRCEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("LRCEnd"), LRCEnd, CA2CT(EEPROM_Map.c_str()));
+
+	SonyDCCStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("SonyDCCStart"), SonyDCCStart, CA2CT(EEPROM_Map.c_str()));
+	SonyDCCEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("SonyDCCEnd"), SonyDCCEnd, CA2CT(EEPROM_Map.c_str()));
 
 	FVStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("FVStart"), PDStart, CA2CT(EEPROM_Map.c_str()));
 	PDStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("PDStart"), PDStart, CA2CT(EEPROM_Map.c_str()));
@@ -439,6 +424,13 @@ void load_EEPROM_Address() {
 
 	focusMapStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("focusMapStart"), focusMapStart, CA2CT(EEPROM_Map.c_str()));
 	focusMapEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("focusMapEnd"), focusMapEnd, CA2CT(EEPROM_Map.c_str()));
+
+	QSCStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("QSCStart"), QSCStart, CA2CT(EEPROM_Map.c_str()));
+	QSCEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("QSCEnd"), QSCEnd, CA2CT(EEPROM_Map.c_str()));
+
+	distortionStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("distortionStart"), distortionStart, CA2CT(EEPROM_Map.c_str()));
+	distortionEnd = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("distortionEnd"), distortionEnd, CA2CT(EEPROM_Map.c_str()));
+
 
 	/////////////////////////V983-LSI	
 	headerLSIStart = GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("headerLSIStart"), headerLSIStart, CA2CT(EEPROM_Map.c_str()));
@@ -499,12 +491,13 @@ void save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("serialNumberStart"), lptstr2int(serialNumberStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("serialNumberEnd"), lptstr2int(serialNumberEnd), CA2CT(EEPROM_Map.c_str()));
 
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("AFhallStart"), lptstr2int(AFhallStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("AFhallEnd"), lptstr2int(AFhallEnd), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("hallStart"), lptstr2int(hallStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("hallEnd"), lptstr2int(hallEnd), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("oisFW"), lptstr2int(oisFW), CA2CT(EEPROM_Map.c_str()));
-
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("afStart"), lptstr2int(afStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("afEnd"), lptstr2int(afEnd), CA2CT(EEPROM_Map.c_str()));
@@ -515,9 +508,11 @@ void save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbStart4"), lptstr2int(awbStart4000), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("awbEnd4"), lptstr2int(awbEnd4000), CA2CT(EEPROM_Map.c_str()));
 
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("dualAWBStart"), lptstr2int(dualAWBStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("dualAWBEnd"), lptstr2int(dualAWBEnd), CA2CT(EEPROM_Map.c_str()));
+
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscStart"), lptstr2int(lscStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("lscEnd"), lptstr2int(lscEnd), CA2CT(EEPROM_Map.c_str()));
-
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafGainStart"), lptstr2int(pdafGainStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("pdafGainEnd"), lptstr2int(pdafGainEnd), CA2CT(EEPROM_Map.c_str()));
@@ -525,8 +520,21 @@ void save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("DCCStart"), lptstr2int(DCCStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("DCCEnd"), lptstr2int(DCCEnd), CA2CT(EEPROM_Map.c_str()));
 
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("LRCStart"), lptstr2int(LRCStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("LRCEnd"), lptstr2int(LRCEnd), CA2CT(EEPROM_Map.c_str()));
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("SonyDCCStart"), lptstr2int(SonyDCCStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("SonyDCCEnd"), lptstr2int(SonyDCCEnd), CA2CT(EEPROM_Map.c_str()));
+
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("FVStart"), lptstr2int(FVStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("PDStart"), lptstr2int(PDStart), CA2CT(EEPROM_Map.c_str()));
+	
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("QSCStart"), lptstr2int(QSCStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("QSCEnd"), lptstr2int(QSCEnd), CA2CT(EEPROM_Map.c_str()));
+	
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("distortionStart"), lptstr2int(distortionStart), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("distortionEnd"), lptstr2int(distortionEnd), CA2CT(EEPROM_Map.c_str()));
+
 	//////////////////  for V983
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("focusMapStart"), lptstr2int(focusMapStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("focusMapEnd"), lptstr2int(focusMapEnd), CA2CT(EEPROM_Map.c_str()));
@@ -606,118 +614,6 @@ void save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("macSFRStart"), lptstr2int(macSFRStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("MasterSPLStart"), lptstr2int(MasterSPLStart), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Dual_INF_SFRStart"), lptstr2int(Dual_INF_SFRStart), CA2CT(EEPROM_Map.c_str()));
-
-}
-
-void load_OTP_Address() {
-
-	OTP_user_Start = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_user_Start"), OTP_user_Start, CA2CT(EEPROM_Map.c_str()));
-	/////////info	
-	OTP_info_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_flag"), OTP_info_flag, CA2CT(EEPROM_Map.c_str()));
-
-	OTP_info_start[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_start[0]"), OTP_info_start[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_info_start[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_start[1]"), OTP_info_start[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_info_start[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_start[2]"), OTP_info_start[2], CA2CT(EEPROM_Map.c_str()));
-
-	OTP_info_end[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_end[0]"), OTP_info_end[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_info_end[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_end[1]"), OTP_info_end[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_info_end[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_info_end[2]"), OTP_info_end[2], CA2CT(EEPROM_Map.c_str()));
-	///////////awb
-	OTP_awb_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_flag"), OTP_awb_flag, CA2CT(EEPROM_Map.c_str()));
-
-	OTP_awb_start[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_start[0]"), OTP_awb_start[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_awb_start[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_start[1]"), OTP_awb_start[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_awb_start[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_start[2]"), OTP_awb_start[2], CA2CT(EEPROM_Map.c_str()));
-
-	OTP_awb_end[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_end[0]"), OTP_awb_end[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_awb_end[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_end[1]"), OTP_awb_end[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_awb_end[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_awb_end[2]"), OTP_awb_end[2], CA2CT(EEPROM_Map.c_str()));
-	///////////awb
-	OTP_lsc_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_flag"), OTP_lsc_flag, CA2CT(EEPROM_Map.c_str()));
-
-	OTP_lsc_start[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_start[0]"), OTP_lsc_start[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_lsc_start[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_start[1]"), OTP_lsc_start[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_lsc_start[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_start[2]"), OTP_lsc_start[2], CA2CT(EEPROM_Map.c_str()));
-
-	OTP_lsc_end[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_end[0]"), OTP_lsc_end[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_lsc_end[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_end[1]"), OTP_lsc_end[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_lsc_end[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_end[2]"), OTP_lsc_end[2], CA2CT(EEPROM_Map.c_str()));
-	//////////
-	OTP_checkSum = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_checkSum"), OTP_checkSum, CA2CT(EEPROM_Map.c_str()));
-	/////////
-	OTP_FF_cal_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_FF_cal_flag"), OTP_FF_cal_flag, CA2CT(EEPROM_Map.c_str()));
-	OTP_final_FF_cal_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_final_FF_cal_flag"), OTP_final_FF_cal_flag, CA2CT(EEPROM_Map.c_str()));
-	OTP_lsc_cal_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_lsc_cal_flag"), OTP_lsc_cal_flag, CA2CT(EEPROM_Map.c_str()));
-	/////////
-	OTP_SFR_focus_start[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_focus_start[0]"), OTP_SFR_focus_start[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_SFR_focus_start[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_focus_start[1]"), OTP_SFR_focus_start[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_SFR_focus_start[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_focus_start[2]"), OTP_SFR_focus_start[2], CA2CT(EEPROM_Map.c_str()));
-
-	OTP_SFR_final_start[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_final_start[0]"), OTP_SFR_final_start[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_SFR_final_start[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_final_start[1]"), OTP_SFR_final_start[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_SFR_final_start[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_final_start[2]"), OTP_SFR_final_start[2], CA2CT(EEPROM_Map.c_str()));
-
-	OTP_SFR_dual_start[0] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_dual_start[0]"), OTP_SFR_dual_start[0], CA2CT(EEPROM_Map.c_str()));
-	OTP_SFR_dual_start[1] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_dual_start[1]"), OTP_SFR_dual_start[1], CA2CT(EEPROM_Map.c_str()));
-	OTP_SFR_dual_start[2] = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_SFR_dual_start[2]"), OTP_SFR_dual_start[2], CA2CT(EEPROM_Map.c_str()));
-
-	OTP_master_flag = GetPrivateProfileInt(_T("OTP_Address"), TEXT("OTP_master_flag"), OTP_master_flag, CA2CT(EEPROM_Map.c_str()));
-
-}
-
-void save_OTP_Address() {
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_user_Start"), lptstr2int(OTP_user_Start), CA2CT(EEPROM_Map.c_str()));
-	/////////info	
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_flag"), lptstr2int(OTP_info_flag), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_start[0]"), lptstr2int(OTP_info_start[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_start[1]"), lptstr2int(OTP_info_start[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_start[2]"), lptstr2int(OTP_info_start[2]), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_end[0]"), lptstr2int(OTP_info_end[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_end[1]"), lptstr2int(OTP_info_end[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_info_end[2]"), lptstr2int(OTP_info_end[2]), CA2CT(EEPROM_Map.c_str()));
-	///////////awb
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_flag"), lptstr2int(OTP_awb_flag), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_start[0]"), lptstr2int(OTP_awb_start[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_start[1]"), lptstr2int(OTP_awb_start[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_start[2]"), lptstr2int(OTP_awb_start[2]), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_end[0]"), lptstr2int(OTP_awb_end[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_end[1]"), lptstr2int(OTP_awb_end[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_awb_end[2]"), lptstr2int(OTP_awb_end[2]), CA2CT(EEPROM_Map.c_str()));
-	///////////awb
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_flag"), lptstr2int(OTP_lsc_flag), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_start[0]"), lptstr2int(OTP_lsc_start[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_start[1]"), lptstr2int(OTP_lsc_start[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_start[2]"), lptstr2int(OTP_lsc_start[2]), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_end[0]"), lptstr2int(OTP_lsc_end[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_end[1]"), lptstr2int(OTP_lsc_end[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_end[2]"), lptstr2int(OTP_lsc_end[2]), CA2CT(EEPROM_Map.c_str()));
-	///////////awb
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_checkSum"), lptstr2int(OTP_checkSum), CA2CT(EEPROM_Map.c_str()));
-	/////////
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_FF_cal_flag"), lptstr2int(OTP_FF_cal_flag), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_final_FF_cal_flag"), lptstr2int(OTP_final_FF_cal_flag), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_lsc_cal_flag"), lptstr2int(OTP_lsc_cal_flag), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_focus_start[0]"), lptstr2int(OTP_SFR_focus_start[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_focus_start[1]"), lptstr2int(OTP_SFR_focus_start[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_focus_start[2]"), lptstr2int(OTP_SFR_focus_start[2]), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_final_start[0]"), lptstr2int(OTP_SFR_final_start[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_final_start[1]"), lptstr2int(OTP_SFR_final_start[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_final_start[2]"), lptstr2int(OTP_SFR_final_start[2]), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_dual_start[0]"), lptstr2int(OTP_SFR_dual_start[0]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_dual_start[1]"), lptstr2int(OTP_SFR_dual_start[1]), CA2CT(EEPROM_Map.c_str()));
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_SFR_dual_start[2]"), lptstr2int(OTP_SFR_dual_start[2]), CA2CT(EEPROM_Map.c_str()));
-
-	WritePrivateProfileString(TEXT("OTP_Address"), TEXT("OTP_master_flag"), lptstr2int(OTP_master_flag), CA2CT(EEPROM_Map.c_str()));
 
 }
 
@@ -1301,10 +1197,14 @@ void widget6::selectModel() {
 	string str1 = ".\\Setting\\";
 	EEPROM_Map = str1 + EEPROM_Map;
 	save_EEPROM_Setting();
-	if (modelSelect == 3)
+
+	if (modelSelect == 3 || modelSelect == 5 || modelSelect == 8)
 		EEP_Size = 16384;
+	else if (modelSelect == 6 || modelSelect == 7)
+		EEP_Size = 12288;
 	else 
 		EEP_Size = 8192;
+
 }
 
 
@@ -1330,8 +1230,13 @@ void lsc_Parse(int S, int E) {
 			}
 	}
 
-	if (modelSelect == 3|| modelSelect == 4) {
+	if (modelSelect == 3|| modelSelect == 4 || modelSelect == 8 || modelSelect == 6) {
 		int e = S;
+		if (modelSelect == 8)
+			e += 2;
+		if (modelSelect == 6)
+			e += 4;
+
 		for (int i = 0; i < 13; i++)
 			for (int j = 0; j < 17; j++) {
 				for (int k = 0; k < 4; k++) {
@@ -1470,7 +1375,6 @@ void lscLSI_Parse(int S, int E) {
 			}
 			fout << endl;
 		}
-
 	}
 
 }
@@ -2154,10 +2058,20 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 
 	if (checkSumEnd > 0) {
 		int tmp = 0, end = checkSumEnd, start = checkSumStart;
-		if (modelSelect == 3 || modelSelect == 4|| offset1 <0 ){
+		if (modelSelect == 3 || modelSelect == 4) {
 			end = checkSumEnd - offset1;
 			start = start + offset2;
 		}
+		if (modelSelect == 8)	start++;
+		if (modelSelect == 6)	end--;
+
+		if (modelSelect == 5){	
+			if(checkSumEnd- checkSumStart<4){
+				end = checkSumEnd - offset1;
+				start = start + offset2;
+			}
+		}
+
 		for (int i = start; i < end; i++)
 			tmp += DecData[i];
 
@@ -2191,7 +2105,7 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 		}
 
 		fout << chk[0] << chk[1] << "	";
-		if ((modelSelect > 2&& modelSelect<5)|| checkSumStart>checkSumEnd)
+		if (modelSelect == 3|| modelSelect==4|| modelSelect == 6 || (checkSumStart>checkSumEnd&&offset2==0))
 			fout << getFlag(checkSumEnd - 1) << "	" << endl;
 		else
 			fout << getFlag(checkSumStart) << "	" << endl;
@@ -2282,6 +2196,28 @@ void basicInfo_Parse(int S,int E) {
 		fout << "OIS IC Version:	0x" << D[e][0] << D[e][1] << endl;
 
 	}
+
+	if (modelSelect > 5&& modelSelect<9) {
+		if(modelSelect==8)
+			e++;
+		fout << "Vender ID:	0x" << D[e][0] << D[e][1] << "	//SEMCO = 0x03" << endl;
+		e+=2;
+		fout << "Production Date:	" << D[e+2][0] << D[e+2][1] << D[e + 3][0] << D[e + 3][1] << "-" <<DecData[e+1] << "-" << DecData[e] << endl;
+		e += 4;
+		fout << "Sensor ID:	0x" << D[e][0] << D[e][1] << D[e + 1][0] << D[e + 1][1] <<  endl;
+		e += 2;
+		fout << "Lens ID:	0x" << D[e][0] << D[e][1] <<  endl;
+		e += 2;
+		fout << "VCM ID:	0x" << D[e][0] << D[e][1] <<  endl;
+		e += 2;
+		fout << "Driver IC:	0x" << D[e][0] << D[e][1] << "	//SEMCO IC=0x08" << endl;
+		e += 2;
+		fout << "Module Version:	0x" << D[e][0] << D[e][1] << endl;
+		e += 1;
+		fout << "Mirror/Flip:	0x" << D[e][0] << D[e][1] << endl;
+
+	}
+
 	fout << endl;
 }
 
@@ -2307,12 +2243,33 @@ void date_Parse(int S, int E) {
 }
 
 
+void fuse_Parse(int S, int E) {
+
+	if (fuseIDStart > 0) {
+		int e = S + 1, len =9;
+
+		if (modelSelect == 6) {
+			e--;
+		}
+		fout << "Sensor Fuse ID:	";
+		for (int i = 0; i < len; i++) {
+			fout << D[e + i][0] << D[e + i][1];
+		}
+		fout << endl;
+		fout << endl;
+	}
+}
+
+
 void QR_Parse(int S, int E) {
 	int e = S + 1;
 	int qrl = 12;
 	if (modelSelect == 3) {
 		e--;
 		qrl = 17;
+	}
+	if(modelSelect == 8|| modelSelect == 6) {
+		qrl = 19;
 	}
 	fout << "QR Code:	";
 	for (int i = 0; i < qrl; i++) {
@@ -2329,7 +2286,7 @@ void OIS_Hall_Parse(int S, int E) {
 	int e = S; unsigned int tmp = 0;
 	float* fp = (float*)&tmp;
 
-	if (modelSelect != 3 && modelSelect != 4) {
+	if (modelSelect < 3) {
 		fout << "Hall Offset X:	" << hex2Dec(e + 1) * 256 + hex2Dec(e + 2) << endl;
 		fout << "Hall Offset Y:	" << hex2Dec(e + 3) * 256 + hex2Dec(e + 4) << endl;
 		fout << "Hall Center X:	" << hex2Dec(e + 5) * 256 + hex2Dec(e + 6) << endl;
@@ -2365,6 +2322,7 @@ void OIS_Hall_Parse(int S, int E) {
 	}
 
 	if (modelSelect == 3 || modelSelect == 4) {
+	
 		fout << "OIS Driver IC:	0x" << D[e][0] << D[e][1] << endl;
 		e = e + 2;
 		tmp = 0;
@@ -2372,8 +2330,9 @@ void OIS_Hall_Parse(int S, int E) {
 			tmp *= 256;
 			tmp += DecData[e + i];
 		}
-		//	float* fp = (float*)&tmp;
 		e = e + 2;
+		//	float* fp = (float*)&tmp;
+		
 		fout << "OIS Hall X max Before:	";
 		short_Out(e, false);
 		e = e + 4;
@@ -2493,6 +2452,93 @@ void OIS_Hall_Parse(int S, int E) {
 
 	}
 
+	if (modelSelect == 6) {
+
+		tmp = 0;
+		for (int i = 3; i >= 0; i--) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+		e = e + 2;
+		//	float* fp = (float*)&tmp;
+
+		fout << "OIS Hall X max Before:	";
+		short_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall X min Before:	";
+		short_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall X max After:	";
+		short_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall X min After:	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "OIS Hall Y max Before:	";
+		short_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Y min Before:	";
+		short_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Y max After:	";
+		short_Out(e, false);
+		e = e + 4;
+		fout << "OIS Hall Y min After:	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "OIS Hall Bias X :	";
+		short_Out(e, false);
+		e = e + 3;
+		fout << "OIS Hall Offset X :	";
+		char_Out(e);
+		e = e + 5;
+
+		fout << "OIS Hall Bias Y :	";
+		short_Out(e, false);
+		e = e + 3;
+		fout << "OIS Hall Offset Y :	";
+		char_Out(e);
+		e = e + 5;
+
+		fout << "Loop Gain X :	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "Loop Gain Y :	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "Neutral Center X :	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "Neutral Center Y :	";
+		short_Out(e, false);
+		e = e + 6;
+
+		fout << "Gyro Offset X :	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Offset Y :	";
+		short_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Gain X :	";
+		gyro_Out(e, false);
+		e = e + 4;
+
+		fout << "Gyro Gain Y :	";
+		gyro_Out(e, false);
+
+		e = e + 4;
+		fout << "SR X:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+		e += 2;
+		fout << "SR Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+	}
+
 	fout << endl;
 }
 
@@ -2540,7 +2586,7 @@ void af_Parse(int S, int E) {
 
 	fout << "-------AF CAL Data------" << endl;
 	int e = S;
-	if (modelSelect != 3 && modelSelect != 4) {
+	if (modelSelect == 1 || modelSelect == 2 || modelSelect == 5) {
 		fout << "~~~ Face Forward AF ~~~" << endl;
 		e += 1;
 		if (modelSelect == 2) {
@@ -2555,6 +2601,8 @@ void af_Parse(int S, int E) {
 		e += 2;
 		fout << "AF Code2:	" << (hex2Dec(e) & 0x03) * 256 + hex2Dec(e + 1) << endl;
 		e += 2;
+		
+
 		// Sensor Thermal Data
 
 		int tmp = hex2Dec(e);
@@ -2570,6 +2618,33 @@ void af_Parse(int S, int E) {
 		else if (tmp >= 236)
 			tmp = 256 - tmp;
 		fout << "Sensor thermal(Mac):	" << tmp << endl;
+	}
+
+	if (modelSelect == 8) {
+		e++;
+		fout << "Mac:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e += 2;
+		fout << "Inf:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e += 2;
+		fout << "50cm:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e += 2;
+		fout << "100cm:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e += 2;
+		fout << "Sensor thermal(Inf):	" << (int)DecData[e] << endl;
+		e += 1;
+		fout << "Sensor thermal(Mac):	" << (int)DecData[e] << endl;
+	}
+
+	if (modelSelect == 6) {
+		fout << "Mac:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		fout << "Sensor thermal(Mac):	" << (int)DecData[e+2] << endl;
+		e += 4;
+		fout << "Inf:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		fout << "Sensor thermal(Inf):	" << (int)DecData[e+2] << endl;
+		e += 4;
+		fout << "50cm:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+		e += 4;
+		fout << "100cm:	" << DecData[e] + DecData[e + 1] * 256 << endl;
 	}
 
 	if (modelSelect == 3 || modelSelect == 4) {
@@ -2599,7 +2674,18 @@ void af_Parse(int S, int E) {
 }
 
 
-void Dual_AWB_Parse(int S, int E, string str) {
+void af_hall_Parse(int S, int E) {
+
+	fout << "-------AF CAL Data------" << endl;
+	int e = S+1;
+	fout << "Hall_Max:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	e += 2;
+	fout << "Hall_Min:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	fout << endl;
+}
+
+
+void Oppo_AWB_Parse(int S, int E, string str) {
 	int e = S;
 
 	fout << "Main_Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
@@ -2610,21 +2696,58 @@ void Dual_AWB_Parse(int S, int E, string str) {
 	e = e + 2;
 	fout << "Main_Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
 	e = e + 2;
-	fout << str <<"Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	fout << str << "Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
 	e = e + 2;
 	fout << str << "Gr :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
 	e = e + 2;
 	fout << str << "Gb :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
 	e = e + 2;
 	fout << str << "Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+
+	if (modelSelect > 6 && modelSelect < 9) {
+		e = e + 2;
+		fout << str << "light source R/G:	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+		e = e + 2;
+		fout << str << "light source B/G:	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	}
 	fout << endl;
 }
 
+void triple_AWB_Parse(int S, int E, string str) {
+	int e = S;
+
+	fout << str << endl;
+	fout << "Main_Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Main_Gr :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Main_Gb :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Main_Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout  << "Wide_Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Wide_Gr :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Wide_Gb :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Wide_Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout << "Tele_Red :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout  << "Tele_Gr :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout  << "Tele_Gb :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+	e = e + 2;
+	fout  << "Tele_Blue :	" << (float)(hex2Dec(e) + hex2Dec(e + 1) * 256) << endl;
+
+	fout << endl;
+}
 
 void awb_Parse(int S, int E){
 
 	int e = awbStart + 1;
-	if (modelSelect < 3 || modelSelect>4) {
+	if (modelSelect < 3 || modelSelect==5) {
 		fout << "~~~5100K AWB Cal Data:" << endl;
 		fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
 		fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
@@ -2661,33 +2784,51 @@ void awb_Parse(int S, int E){
 
 	}
 
-	if (modelSelect == 3 || modelSelect == 4) {
-		
-		e = awbStart+E;
+	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8 || modelSelect == 6) {
+
+		if (modelSelect == 6)e--;
+
 		fout << "~~~5100K AWB Cal Data:" << endl;
-		Dual_AWB_Parse(e,0,"Golden_");
+		Oppo_AWB_Parse(e, 0, "Golden_");
 
-		e = awbStart4000+E;
+		e += 20;
+		if (modelSelect <6)
+			e = awbStart4000 + E;
+
 		fout << "~~~4000K AWB Cal Data:" << endl;
-		Dual_AWB_Parse(e,0, "Golden_");
+		Oppo_AWB_Parse(e, 0, "Golden_");
 
-		e = awbStart3100+E;
+		e += 20;
+		if (modelSelect <6)
+			e = awbStart3100 + E;
+
 		fout << "~~~3100K AWB Cal Data:" << endl;
-		Dual_AWB_Parse(e,0, "Golden_");
+		Oppo_AWB_Parse(e, 0, "Golden_");
 
-		e = awbLightStart+E;
-		fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "5100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = awbLightStart4000+E;
-		fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = awbLightStart3100+E;
-		fout << "3100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
-		e = e + 2;
-		fout << "3100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256)  << endl;
+		if (modelSelect == 3 || modelSelect == 4) {
+			e = awbLightStart + E;
+			fout << "5100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) << endl;
+			e = e + 2;
+			fout << "5100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) << endl;
+			e = awbLightStart4000 + E;
+			fout << "4000k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) << endl;
+			e = e + 2;
+			fout << "4000k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) << endl;
+			e = awbLightStart3100 + E;
+			fout << "3100k light source R/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) << endl;
+			e = e + 2;
+			fout << "3100k light source B/G calibration :	" << (float)(hex2Dec(e + 0) + hex2Dec(e + 1) * 256) << endl;
+		}
 	}
+
+	if (modelSelect == 6) {
+
+		triple_AWB_Parse(dualAWBStart, 0, "Triple AWB 5100K:	");
+		triple_AWB_Parse(dualAWBStart+24, 0, "Triple AWB 4000K:	");
+		triple_AWB_Parse(dualAWBStart+48, 0, "Triple AWB 3100K:	");
+
+	}
+
 	fout << endl;
 }
 
@@ -2696,7 +2837,7 @@ void gain_Map_Parse(int S, int E) {
 
 	fout << "-------PDAF CAL Data------" << endl;
 
-	if (modelSelect != 3 && modelSelect != 4) {
+	if (modelSelect == 1 || modelSelect == 2 || modelSelect == 5) {
 		int e = S + 1;
 		fout << "PDAF Version:	" << DecData[e + 0] * 256 + DecData[e + 1] << endl;
 		fout << "Gain map Width:	" << DecData[e + 2] * 256 + DecData[e + 3] << endl;
@@ -2717,13 +2858,31 @@ void gain_Map_Parse(int S, int E) {
 
 	}
 
-	if (modelSelect == 3 || modelSelect == 4) {
+	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8) {
 		int e = S;
+		if (modelSelect == 8)
+			e++;
+
 		fout << "PDAF Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
 		fout << "Gain map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
 		fout << "Gain map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
 		e = e + 6;
 
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+				e += 2;
+			}
+
+		for (int i = 0; i < 13; i++)
+			for (int j = 0; j < 17; j++) {
+				PDgainRight[i][j] = DecData[e] + DecData[e + 1] * 256;
+				e += 2;
+			}
+	}
+
+	if (modelSelect == 6) {
+		int e = S;
 		for (int i = 0; i < 13; i++)
 			for (int j = 0; j < 17; j++) {
 				PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
@@ -2788,7 +2947,7 @@ void FocusMap_Parse(int S, int E) {
 void DCC_Parse(int S, int E) {
 	fout << "~~~DCC Data map:" << endl;
 	int e = S;
-	if (modelSelect != 3 && modelSelect != 4) {
+	if (modelSelect == 1 || modelSelect == 2 || modelSelect == 5) {
 
 		if (E > 0)
 			e = DCCStart + 1;
@@ -2806,7 +2965,11 @@ void DCC_Parse(int S, int E) {
 		}
 	}
 
-	if (modelSelect == 3 || modelSelect == 4) {
+	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8) {
+
+		if (modelSelect == 8)
+			e++;
+
 		fout << "DCC QC Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
 		fout << "DCC map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
 		fout << "DCC map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
@@ -2818,6 +2981,15 @@ void DCC_Parse(int S, int E) {
 				DCC[i][j] = DecData[e] + 256 * DecData[e + 1];
 				e += 2;
 			}
+		}
+	}
+
+	if ( modelSelect == 6) {
+
+		for (int i = 0; i < 6; i++) 
+			for (int j = 0; j < 8; j++) {
+				DCC[i][j] = DecData[e] + 256 * DecData[e + 1];
+				e += 2;		
 		}
 	}
 
@@ -2833,40 +3005,78 @@ void DCC_Parse(int S, int E) {
 }
 
 
+void QC_Five_DCC_Parse(int S, int E) {
+
+	int e = S;
+
+	fout << "DCC Version:	0x" << D[e+1][0] << D[e + 1][1] << D[e][0] << D[e][1] << endl;
+	e += 2;
+	fout << "DCC Type:	0x" << D[e + 1][0] << D[e + 1][1] << D[e][0] << D[e][1] << endl;
+	e += 2;
+	fout << "Map Width:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	e += 2;
+	fout << "Map Height:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	e += 2;
+	fout << "DCC Qformat:	0x" << D[e + 1][0] << D[e + 1][1] << D[e][0] << D[e][1] << endl;
+	e += 2;
+	fout << "DCC Width:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	e += 2;
+	fout << "DCC Height:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	e += 2;
+	fout << "Num_Body_in_use:	" << DecData[e] + DecData[e + 1] * 256 << endl;
+	//DCC Data map:
+	
+	gain_Map_Parse(S + 20, E);
+	DCC_Parse(S + 20+888, E);
+	gain_Map_Parse(S + 20 + 988, E);
+	DCC_Parse(S + 20 + 988+ 888, E);
+	gain_Map_Parse(S+20 + 988 * 2, E);
+	DCC_Parse(S + 20 + 988 * 2+ 888, E);
+	gain_Map_Parse(S + 2984, E);
+	DCC_Parse(S + 2984 + 888, E);
+	gain_Map_Parse(S + 3972, E);
+	DCC_Parse(S + 3972 + 888, E);
+
+	fout << endl;
+
+}
+
+
 void sony_LRC_Parse(int S, int E) {
 
 	fout << "~~~Sony LRC Data map:" << endl;
 	int e = S;
-
-	if (modelSelect == 3){
+	if (modelSelect == 8) 
+		e++;
+	if (modelSelect == 3 || modelSelect == 8){
 		for (int i = 0; i < 12; i++)
 			for (int j = 0; j < 16; j++) {
 				LRC[0][i][j] = DecData[e];
 				e++;
 			}
 
-	for (int i = 0; i < 12; i++)
-		for (int j = 0; j < 16; j++) {
-			LRC[1][i][j] = DecData[e];
-			e++;
-		}
+		for (int i = 0; i < 12; i++)
+			for (int j = 0; j < 16; j++) {
+				LRC[1][i][j] = DecData[e];
+				e++;
+			}
 
-	fout << endl;
-	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 16; j++) {
-			fout << LRC[0][i][j] << "	";
+		fout << endl;
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 16; j++) {
+				fout << LRC[0][i][j] << "	";
+			}
+			fout << endl;
 		}
 		fout << endl;
-	}
-	fout << endl;
 
-	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 16; j++) {
-			fout << LRC[1][i][j] << "	";
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 16; j++) {
+				fout << LRC[1][i][j] << "	";
+			}
+			fout << endl;
 		}
-		fout << endl;
 	}
-}
 	if (modelSelect == 4) {
 		for (int i = 0; i < 7; i++)
 			for (int j = 0; j < 10; j++) {
@@ -2905,6 +3115,8 @@ void sony_DCC_Parse(int S, int E) {
 
 	fout << "~~~Sony DCC Data map:" << endl;
 	int e = S;
+	if (modelSelect == 8)
+		e++;
 	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < 8; j++) {
 			DCC_Sony[i][j] = DecData[e] + 256 * DecData[e + 1];
@@ -2924,12 +3136,93 @@ void sony_DCC_Parse(int S, int E) {
 }
 
 
+void AEC_Parse(int S, int E) {
+
+	if (AECStart > 0) {
+
+		fout << "--------AEC Cal Data-------" << endl;
+		int e = AECStart + 1;
+
+		if (modelSelect == 1 || modelSelect == 2 ) {
+
+			//AEC Cal Data:	
+			fout << "Brightness_Ratio:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 1024 << endl;
+			e += 2;
+			fout << "Ref_Sub_Gain:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+			fout << "Ref_Sub_Linecount:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+			fout << "Ref_Main_Gain:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+			fout << "Ref_Main_Linecount:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+			fout << "Ref_Color_temp:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+
+			unsigned int tmp = 0;
+			for (int i = 0; i < 4; i++) {
+				tmp *= 256;
+				tmp += DecData[e + i];
+			}
+			fout << "Ref_SUB_Shutter :	" << tmp << endl;
+			e += 4;
+			fout << "Ref_Sub_line length pclk:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+
+			tmp = 0;
+			for (int i = 0; i < 4; i++) {
+				tmp *= 256;
+				tmp += DecData[e + i];
+			}
+			fout << "Ref_Sub_pclk:	" << tmp << endl;
+			e += 4;
+
+			tmp = 0;
+			for (int i = 0; i < 4; i++) {
+				tmp *= 256;
+				tmp += DecData[e + i];
+			}
+			fout << "Ref_Main_Shutter :	" << tmp << endl;
+			e += 4;
+
+			fout << "Ref_Main_line length pclk:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+			e += 2;
+
+			tmp = 0;
+			for (int i = 0; i < 4; i++) {
+				tmp *= 256;
+				tmp += DecData[e + i];
+			}
+			fout << "Ref_Main_pclk:	" << tmp << endl;
+			e += 4;
+		}
+
+		if (modelSelect == 8|| modelSelect == 6) {
+			fout << "Brightness_Ratio:	" << (float)( DecData[e] + 256 * DecData[e + 1]) / 1024 << endl;
+			e += 2;
+			fout << "Ref_Sub_Gain:	" << DecData[e] + 256 * DecData[e + 1] << endl;
+			e += 2;
+			fout << "ref_Sub_exposure_time_ms:	" << DecData[e] + 256 * DecData[e + 1] << endl;
+			e += 2;
+			fout << "Ref_Main_Gain:	" << DecData[e] + 256 * DecData[e + 1] << endl;
+			e += 2;
+			fout << "ref_Main_exposure_time_ms:	" << DecData[e] + 256 * DecData[e + 1] << endl;
+		}
+	}
+
+}
+
+
 void dual_Cal_Parse(int S, int E) {
 
 	unsigned int Dou[2] = { 0,0 };
 	double* dp = (double*)Dou;
 	int e = S;
-	if (modelSelect < 3 ){
+
+	if (modelSelect == 8)
+		e++;
+
+	if (modelSelect < 3 || modelSelect == 8){
 		S++;
 		for (int p = 0; p < 2; p++) {
 			for (int i = 0; i < 4; i++) {
@@ -2997,19 +3290,12 @@ void dual_Cal_Parse(int S, int E) {
 
 void SFR_display(int group, int e) {
 
-	if (DecData[e] == 0x53)
-		fout << "S";
-	if (DecData[e] == 0x41 || DecData[e] == 1)
-		fout << "A";
-	if (DecData[e] == 0x42 || DecData[e] == 0)
-		fout << "B";
-
-	fout << endl;
+	fout << "SFR Garde:	0x" << D[e][0] << D[e][1] << endl;
 	e++;
 
 	fout << "Center_1	"; 
 	int g = group - 1;
-	if (modelSelect == 3 || modelSelect == 4) {
+	if (modelSelect >2) {
 		fout << "Center_2	";
 		g--;
 	}
@@ -3160,8 +3446,7 @@ void widget6::on_pushButton_parser_clicked()
 	ui->output->clear();
 
 	//Load EEPROM_Map.ini
-	modelSelect = ui->model->document()->toPlainText().toInt();
-
+	selectModel();
 
 	TCHAR lpTexts[25];
 	string temp_model = to_string(modelSelect);
@@ -3174,11 +3459,7 @@ void widget6::on_pushButton_parser_clicked()
 	save_EEPROM_Setting();
 
 	/////////////////////
-	if(modelSelect==3 || modelSelect == 5)
-		EEP_Size = 16384;
-	else EEP_Size = 8192;
 
-	if (ui->dataType_EEPROM->isChecked()) {
 		load_EEPROM_Address();
 		save_EEPROM_Address();
 
@@ -3213,7 +3494,7 @@ void widget6::on_pushButton_parser_clicked()
 			CheckSum_Check(infoStart, infoEnd, 30, 0, "Info");
 		}
 
-		if (modelSelect < 3 || modelSelect == 5) {
+		if (modelSelect < 3 || modelSelect == 5 || modelSelect == 8) {
 			CheckSum_Check(infoStart, infoEnd, 0, 0, "Info");
 		}
 
@@ -3233,23 +3514,32 @@ void widget6::on_pushButton_parser_clicked()
 			CheckSum_Check(awbLightStart3100, awbLightEnd3100, 3, 0, "Light3");
 			CheckSum_Check(AFhallStart, AFhallEnd, 1, 0, "AFHall");
 		}
-
-		if (modelSelect==5) {
+		else {
 			CheckSum_Check(awbStart, awbEnd, 1, 0, "AWBCal");
 		}
 
+		CheckSum_Check(dualAWBStart, dualAWBEnd, 1, 0, "DualAWB");
 		CheckSum_Check(hallStart, hallEnd, 1, 0, "OISHall");
 		CheckSum_Check(afDriftStart, afDriftEnd, 1, 0, "Drift");
 		CheckSum_Check(afStart, afEnd, 21, 0, "AFCal");
 		CheckSum_Check(lscStart, lscEnd, 1, 0, "LSCCal");
 		CheckSum_Check(pdafGainStart, pdafGainEnd, 125, 0, "GainM");
-		CheckSum_Check(DCCStart, DCCEnd, 3, 0, "DCCcal");
+
+		if(modelSelect!=6)
+			CheckSum_Check(DCCStart, DCCEnd, 3, 0, "DCCcal");
+		else {
+			CheckSum_Check(DCCStart, DCCEnd, 0, 0, "PDhead");
+			CheckSum_Check(DCCStart + 20, DCCEnd + 988, 0, 0, "Hv_LR");
+			CheckSum_Check(DCCStart + 20 +988, DCCEnd + 988*2, 0, 0, "Hv_UD");
+			CheckSum_Check(DCCStart + 20 +988*2, DCCEnd + 988 * 3, 0, 0, "qHD_LR");
+			CheckSum_Check(DCCStart + 2984, DCCEnd + 3952, 0, 0, "Full_LR");
+			CheckSum_Check(DCCStart + 3972, DCCEnd + 4940, 0, 0, "Full_UD");
+		}
+
+		CheckSum_Check(LRCStart, LRCEnd, 177, 0, "SonyLRC");
+		CheckSum_Check(SonyDCCStart, SonyDCCEnd, 3, 0, "SonyDCC");
 
 		////////////////Sony DCC and Tele/////////////////////////////////////////
-		if (modelSelect == 4) {
-			CheckSum_Check(LRCStart, LRCEnd, 177, 0, "SonyLRC");
-			CheckSum_Check(SonyDCCStart, SonyDCCEnd, 3, 0, "SonyDCC");
-		}
 		if (modelSelect == 3) {
 			CheckSum_Check(LRCStart, LRCEnd, 177, 0, "SonyLRC");
 			CheckSum_Check(SonyDCCStart, SonyDCCEnd, 3, 0, "SonyDCC");
@@ -3278,14 +3568,13 @@ void widget6::on_pushButton_parser_clicked()
 			CheckSum_Check(focusMapStart, focusMapEnd, 1, 0, "Focusmap");
 
 			fout << "~~~~~~~~ LSI CheckSum ~~~~~~~~" << endl;
-
 			CheckSum_Check(headerLSIStart, headerLSIEnd, -52, 0, "head");
 			CheckSum_Check(moduleLSIStart, moduleLSIEnd, -58, 0, "Module");
 			CheckSum_Check(awbLSIStart, awbLSIEnd, -102,0, "AWB");
 			CheckSum_Check(afLSIStart, afLSIEnd, -32,0, "LSI_AF");
 			CheckSum_Check(lscLSIStart, lscLSIEnd, -5844, 0, "LSC");
 			CheckSum_Check(pdafLSIStart, pdafLSIEnd, -1744, 0, "PDAF");
-			CheckSum_Check(oisLSIStart, oisLSIEnd, -52, 0, "OIS");
+			CheckSum_Check(oisLSIStart, oisLSIEnd, -50, -46, "OIS");
 		}
 
 		/////////////////////////////////////////////////////////////
@@ -3298,18 +3587,11 @@ void widget6::on_pushButton_parser_clicked()
 		
 		CheckSum_Check(confidenceStart, confidenceEnd, 1, 0, "Confid");
 		CheckSum_Check(pdaf_max_roiStart, pdaf_max_roiEnd, 1, 0, "Max_ROI");
-
-		if (modelSelect == 3) {
 			
-			CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
-			CheckSum_Check(QSCStart, QSCEnd, 1, 0, "QSCCal");
-
-		}
-
-		if (modelSelect == 4){
-			CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
-			CheckSum_Check(distortiomStart, distortiomEnd, 1, 0, "Distor");
-		}
+		CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
+		CheckSum_Check(QSCStart, QSCEnd, 1, 0, "QSCCal");
+		CheckSum_Check(distortionStart, distortionEnd, 1, 0, "Distor");
+		
 
 		if (totalCheckSum > 0) {
 			fout << "Total	";
@@ -3369,14 +3651,7 @@ void widget6::on_pushButton_parser_clicked()
 			date_Parse(productDateStart, productDateEnd);
 		}
 
-		if (fuseIDEnd > 0) {
-			e = fuseIDStart + 1;
-			fout << "Sensor Fuse ID:	";
-			for (int i = 0; i < 9; i++) {
-				fout << D[e + i][0] << D[e + i][1];
-			}
-			fout << endl;
-		}
+		fuse_Parse(fuseIDStart,fuseIDEnd);
 
 		if (serialNumberStart > 0) {
 			QR_Parse(serialNumberStart, serialNumberEnd);
@@ -3393,6 +3668,11 @@ void widget6::on_pushButton_parser_clicked()
 		if (afStart > 0) {
 			af_Parse(afStart, afEnd);
 		}
+
+		if (AFhallStart > 0) {
+			af_hall_Parse(AFhallStart, AFhallEnd);
+		}
+
 		///////////////AWBdata
 		if (awbStart > 0) {
 			awb_Parse(awbStart, 0);
@@ -3409,7 +3689,10 @@ void widget6::on_pushButton_parser_clicked()
 		}
 
 		if (DCCStart > 0) {
-			DCC_Parse(DCCStart, DCCEnd);
+			if(modelSelect!=6)
+				DCC_Parse(DCCStart, DCCEnd);
+			else 
+				QC_Five_DCC_Parse(DCCStart, DCCEnd);
 		}
 
 		if (FVStart > 0 && modelSelect != 3&& modelSelect != 4) {
@@ -3462,7 +3745,7 @@ void widget6::on_pushButton_parser_clicked()
 			lscLSI_Parse(lscLSIStart, lscLSIEnd);
 		}
 
-		if (modelSelect == 3|| modelSelect == 4) {
+		if (modelSelect == 3|| modelSelect == 4 || modelSelect == 8) {
 
 			sony_LRC_Parse(LRCStart, LRCEnd);
 			sony_DCC_Parse(SonyDCCStart, SonyDCCEnd);
@@ -3479,6 +3762,7 @@ void widget6::on_pushButton_parser_clicked()
 			gain_Map_Parse(pdafGainStart + 0x1000, pdafGainEnd + 0x1000);
 			DCC_Parse(0x1B06, DCCEnd + 0x1B6F);
 		}
+
 		if (modelSelect == 3|| modelSelect == 4) {
 			e = AECStart;
 			fout << "------- Dual AEC Data ------" << endl;
@@ -3505,15 +3789,15 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "------- Dual AWB Data ------" << endl;
 			e = 0xD50;
 			fout << "~~~5100K AWB Cal Data:" << endl;
-			Dual_AWB_Parse(e, 0,"Sub_");
+			Oppo_AWB_Parse(e, 0,"Sub_");
 
 			e = 0xD60;
 			fout << "~~~4000K AWB Cal Data:" << endl;
-			Dual_AWB_Parse(e, 0, "Sub_");
+			Oppo_AWB_Parse(e, 0, "Sub_");
 
 			e = 0xD70;
 			fout << "~~~3100K AWB Cal Data:" << endl;
-			Dual_AWB_Parse(e, 0, "Sub_");
+			Oppo_AWB_Parse(e, 0, "Sub_");
 
 
 		}
@@ -3566,12 +3850,9 @@ void widget6::on_pushButton_parser_clicked()
 		LSI_AF_Parse(afLSIStart, afLSIEnd, "LSI_AF");
 		LSI_OIS_Parse(oisLSIStart, oisLSIEnd, "LSI_AF");
 
-
 		if (modelSelect == 3) {
 			OIS_Parse( oisStart2+4, 0 , "Sub_OIS_SR");
-
 		}
-
 
 		unsigned int Dou[2] = { 0,0 };
 		double* dp = (double*)Dou;
@@ -3581,7 +3862,7 @@ void widget6::on_pushButton_parser_clicked()
 			dual_Cal_Parse(dualCalStart, dualCalEnd);
 		}
 
-		if (modelSelect == 3 ) {
+		if (modelSelect == 3 || modelSelect == 8) {
 			//Dual Cal Data:
 			fout << "-------Dual CAL Data 23------" << endl;
 			dual_Cal_Parse(dualCalStart + 24, dualCalEnd + 24);
@@ -3590,7 +3871,6 @@ void widget6::on_pushButton_parser_clicked()
 		if (dualVerifyStart > 0) {
 			//Dual verify Data:
 			fout << "-------Dual Verify Data------" << endl;
-
 
 			e = dualVerifyStart + 1;
 
@@ -3626,61 +3906,9 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "Range:	" << *dp << endl;
 		}
 
-		if (AECStart > 0&&modelSelect!=3 && modelSelect != 4) {
-
-			//AEC Cal Data:
-			fout << "--------AEC Cal Data-------" << endl;
-			e = AECStart + 1;
-			fout << "Brightness_Ratio:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 1024 << endl;
-			e += 2;
-			fout << "Ref_Sub_Gain:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-			fout << "Ref_Sub_Linecount:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-			fout << "Ref_Main_Gain:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-			fout << "Ref_Main_Linecount:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-			fout << "Ref_Color_temp:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-
-			tmp = 0;
-			for (int i = 0; i < 4; i++) {
-				tmp *= 256;
-				tmp += DecData[e + i];
-			}
-			fout << "Ref_SUB_Shutter :	" << tmp << endl;
-			e += 4;
-			fout << "Ref_Sub_line length pclk:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-
-			tmp = 0;
-			for (int i = 0; i < 4; i++) {
-				tmp *= 256;
-				tmp += DecData[e + i];
-			}
-			fout << "Ref_Sub_pclk:	" << tmp << endl;
-			e += 4;
-
-			tmp = 0;
-			for (int i = 0; i < 4; i++) {
-				tmp *= 256;
-				tmp += DecData[e + i];
-			}
-			fout << "Ref_Main_Shutter :	" << tmp << endl;
-			e += 4;
-
-			fout << "Ref_Main_line length pclk:	" << 256 * DecData[e] + DecData[e + 1] << endl;
-			e += 2;
-
-			tmp = 0;
-			for (int i = 0; i < 4; i++) {
-				tmp *= 256;
-				tmp += DecData[e + i];
-			}
-			fout << "Ref_Main_pclk:	" << tmp << endl;
-			e += 4;
-		}
+		
+		AEC_Parse(AECStart,AECEnd);
+	
 
 		if (confidenceStart > 0) {
 			//PDAF_DCC_Vivo requested Data:
@@ -4049,6 +4277,11 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "AF Code diff NG:	"<< D[e][0] << D[e][1] << endl;
 			}
 
+			if (modelSelect == 5) {
+				SFR_display(34, e);
+
+			}
+
 		}
 
 
@@ -4096,17 +4329,15 @@ void widget6::on_pushButton_parser_clicked()
 
 
 		if (macSFRStart > 0) {
-			fout << "--------Mac SFR data-------" << endl;
-			e = 0;
-			fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-			fout << "0.5TLV	" << "0.5TLH	" << "0.5TRV	" << "0.5TRH	" << "0.5BLH	" << "0.5BLV	" << "0.5BRH	" << "0.5BRV	";
-			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	" << endl;
+			fout << "--------Main Mac SFR data-------" << endl;
+			e = infSFRStart;
 
-			for (int i = 0; i < 27; i++){
-				fout << "0.";
-				if (DecData[e + i] < 10)
-					fout << "0";
-				fout << checkFF(DecData[e + i]) << "	";
+			if (modelSelect < 3) {
+				SFR_display(27, e);
+				fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
+			}
+			if (modelSelect == 5) {
+				SFR_display(34, e);
 			}
 			fout << endl;
 		}
@@ -4153,444 +4384,7 @@ void widget6::on_pushButton_parser_clicked()
 				for (int i = 0; i < 27; i++)
 					fout << "0." << checkFF(DecData[e + i]) << "	";
 			}
-	
 
-	}
-	///////////  OTP parse
-
-	else {
-		load_OTP_Address();
-		save_OTP_Address();
-
-		e = OTP_user_Start;
-		while (now < len && e <= 5151) {
-			if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
-				((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
-					|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	'))) {
-
-				for (int i = 0; i < 16; i++) {
-					D[e][0] = src[now++];
-					D[e][1] = src[now++];
-					DecData[e] = hex2Dec(e);
-					e++;
-					now++;
-				}
-			}
-			else now++;
-		}
-
-		/////////  OTP checkSum
-		fout << "-------OTP Check Sum Compare------" << endl;
-		fout << "(CheckSumItem)	(EEPROM_Value)	(Actual_Value) " << endl;
-
-		if (OTP_info_end[0] > 0)
-			for (int k = 0; k < 3; k++) {
-				e = OTP_info_end[k];
-				char c = 'A' + k;
-				fout << "Info_" << c << " ";
-				fout << D[e][0] << D[e][1] << "	";
-				tmp = 0;
-				for (int i = OTP_info_start[k]; i < OTP_info_end[k]; i++)
-					tmp += DecData[i];
-
-				tmp %= 255;
-				if (tmp == 0)
-					tmp = 255;
-				getHex(tmp);
-				if (tmp % 255 != DecData[e] % 255) {
-
-					QString strDisplay = "OTP info_";
-					strDisplay.append('A' + k);
-					strDisplay += " CheckSum in ";
-					strDisplay += address2hex(e);
-					strDisplay += " NG: 0x";
-					strDisplay.append(D[e][0]);
-					strDisplay.append(D[e][1]);
-					strDisplay += ", real is 0x";
-					strDisplay.append(chk[0]);
-					strDisplay.append(chk[1]);
-
-					strDisplay += '\n';
-					ui->log->insertPlainText(strDisplay);
-				}
-
-				fout << chk[0] << chk[1] << "	" << endl;
-
-			}
-		fout << endl;
-		//~~~~~~~~~~~AWB~~~~~~~~~~
-		if (OTP_awb_end[0] > 0)
-			for (int k = 0; k < 3; k++) {
-				e = OTP_awb_end[k];
-				char c = 'A' + k;
-				fout << "AWB_" << c << " ";
-				fout << D[e][0] << D[e][1] << "	";
-				tmp = 0;
-				for (int i = OTP_awb_start[k]; i < OTP_awb_end[k]; i++)
-					tmp += DecData[i];
-
-				tmp %= 255;
-				if (tmp == 0)
-					tmp = 255;
-				getHex(tmp);
-				if (tmp % 255 != DecData[e] % 255) {
-
-					QString strDisplay = "OTP AWB_";
-					strDisplay.append('A' + k);
-					strDisplay += " CheckSum in ";
-					strDisplay += address2hex(e);
-					strDisplay += " NG: 0x";
-					strDisplay.append(D[e][0]);
-					strDisplay.append(D[e][1]);
-					strDisplay += ", real is 0x";
-					strDisplay.append(chk[0]);
-					strDisplay.append(chk[1]);
-
-					strDisplay += '\n';
-					ui->log->insertPlainText(strDisplay);
-				}
-
-				fout << chk[0] << chk[1] << "	" << endl;
-
-			}
-
-		fout << endl;
-		//~~~~~~~~~~~LSC~~~~~~~~~~
-		if (OTP_lsc_end[0] > 0)
-			for (int k = 0; k < 3; k++) {
-				e = OTP_lsc_end[k];
-				char c = 'A' + k;
-				fout << "LSC_" << c << " ";
-				fout << D[e][0] << D[e][1] << "	";
-				tmp = 0;
-				for (int i = OTP_lsc_start[k]; i < OTP_lsc_end[k]; i++)
-					tmp += DecData[i];
-
-				tmp %= 255;
-				if (tmp == 0)
-					tmp = 255;
-				getHex(tmp);
-				if (tmp % 255 != DecData[e] % 255) {
-
-					QString strDisplay = "OTP LSC_";
-
-					strDisplay.append('A' + k);
-					strDisplay += " CheckSum in ";
-					strDisplay += address2hex(e);
-					strDisplay += " NG: 0x";
-					strDisplay.append(D[e][0]);
-					strDisplay.append(D[e][1]);
-					strDisplay += ", real is 0x";
-					strDisplay.append(chk[0]);
-					strDisplay.append(chk[1]);
-
-					strDisplay += '\n';
-					ui->log->insertPlainText(strDisplay);
-				}
-
-				fout << chk[0] << chk[1] << "	" << endl;
-
-			}
-
-		fout << endl;
-		//~~~~~~~~~~~checkSum~~~~~~~~~~
-		if (OTP_checkSum > 0) {
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "Total_" << c << " ";
-				fout << D[OTP_checkSum + k + 1][0] << D[OTP_checkSum + k + 1][1] << "	" << endl;
-			}
-			tmp = 0;
-			for (int i = OTP_user_Start; i < OTP_checkSum; i++)
-				tmp += DecData[i];
-
-			tmp %= 255;
-			if (tmp == 0)
-				tmp = 255;
-			getHex(tmp);
-
-			fout << "Total_Real:	";
-			fout << chk[0] << chk[1] << "	" << endl;
-
-		}
-
-		fout << endl;
-
-		fout << "-------OTP basic info------" << endl;
-		e = OTP_info_flag;
-		fout << "INFO & FF CAL flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 :  A , 0x13 : B , 0x37 : C" << endl;
-		e++;
-		fout << endl;
-		for (int k = 0; k < 3; k++) {
-
-			e = OTP_info_start[k];
-			char c = 'A' + k;
-			fout << "~~~~~~INFO & FF CAL Data Group " << c << endl;
-			fout << "Module ID:	0x" << D[e][0] << D[e][1] << "	/SEMCO = 0x08" << endl;
-			e++;
-			fout << "Sensor ID:	0x" << D[e][0] << D[e][1] << D[e + 1][0] << D[e + 1][1] << endl;
-			e += 2;
-			fout << "IR filter ID:	0x" << D[e][0] << D[e][1] << "	/Blue Glass = 0x00, Film = 0x01" << endl;
-			e++;
-			fout << "Lens ID:	0x" << D[e][0] << D[e][1] << "	/SEMCO Lens= 0x09" << endl;
-			e++;
-			fout << "FPC/PCB Version:	0x" << D[e][0] << D[e][1] << endl;
-			e++;
-			fout << "Lens Version Version:	0x" << D[e][0] << D[e][1] << endl;
-			e++;
-			fout << "Housing Version Version:	0x" << D[e][0] << D[e][1] << endl;
-			e++;
-			fout << "AWB calibration Version Version:	0x" << D[e][0] << D[e][1] << endl;
-			e++;
-			fout << "LSC calibration Version Version:	0x" << D[e][0] << D[e][1] << endl;
-			e++;
-			fout << "Production Factory:	0x" << D[e + 0x24][0] << D[e + 0x24][1] << "	/HQ = 0x01, STEM=0x10" << endl;
-			e++;
-			fout << "Production Date:	20";
-			for (int i = 0; i < 5; i++) {
-				fout << D[e + i][0] << D[e + i][1];
-				if (i < 2)
-					fout << "-";
-				if (i == 3)
-					fout << ":";
-				if (i == 2)
-					fout << " ";
-			}
-			fout << endl;
-
-			e += 5;
-
-			fout << "Sensor Fuse ID:	";
-			for (int i = 0; i < 11; i++) {
-				fout << D[e + i][0] << D[e + i][1];
-			}
-			fout << endl;
-			fout << endl;
-		}
-
-
-		e = OTP_info_flag;
-		fout << "-------OTP AWB info------" << endl;
-
-		fout << "AWB CAL flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 :  A , 0x13 : B , 0x37 : C" << endl;
-		e++;
-		fout << endl;
-		for (int k = 0; k < 3; k++) {
-
-			e = OTP_awb_start[k];
-			char c = 'A' + k;
-			fout << "~~~~~~AWB CAL Data Group " << c << endl;
-			fout << "~~~5100K AWB Cal Data:" << endl;
-			fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-			fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
-			fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
-			fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
-			fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
-			fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
-
-			//fout << "~~~3100K AWB Cal Data:" << endl;
-			//fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
-			//fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
-			//fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
-			//fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
-			//fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
-			//fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
-			//
-			fout << endl;
-
-		}
-
-
-		e = OTP_lsc_flag;
-		fout << "-------OTP LSC info------" << endl;
-
-		fout << "LSC CAL flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 :  A , 0x13 : B , 0x37 : C" << endl;
-		e++;
-		fout << endl;
-		for (int k = 0; k < 3; k++) {
-			e = OTP_lsc_start[k];
-			char c = 'A' + k;
-			fout << "~~~~~~LSC CAL Data Group " << c << endl;
-			fout << "Horizontal Lens Correction Size:	" << (int)DecData[e] << endl;
-			fout << "Vertical Lens Correction Size:	" << (int)DecData[e + 1] << endl;
-			e = e + 2;
-			for (int i = 0; i < 13; i++)
-				for (int j = 0; j < 17; j++) {
-					for (int k = 0; k < 4; k++) {
-						LSC[i][j][k] = DecData[e + k];
-						LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
-					}
-					e += 5;
-				}
-
-			fout << "~~~Red Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
-					fout << LSC[i][j][0] << "	";
-
-				}
-				fout << endl;
-			}
-
-			fout << "~~~Gr Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
-					fout << LSC[i][j][1] << "	";
-
-				}
-				fout << endl;
-			}
-
-			fout << "~~~Gb Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
-					fout << LSC[i][j][2] << "	";
-
-				}
-				fout << endl;
-			}
-
-			fout << "~~~Blue Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
-					fout << LSC[i][j][3] << "	";
-
-				}
-				fout << endl;
-			}
-			fout << endl;
-
-		}
-
-		if (OTP_FF_cal_flag > 0) {
-			e = OTP_FF_cal_flag;
-			fout << "-------OTP FF test Data------" << endl;
-
-			fout << "FF test Data flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 : A , 0x13 : B , 0x37 : C" << endl;
-			e++;
-
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~FF Test Data Group " << c << endl;
-				e = OTP_FF_cal_flag + 6 * k;
-				fout << "Line No.:	" << D[e + 1][0] << D[e + 1][1] << endl;
-				fout << "Equip No.:	" << D[e + 2][0] << D[e + 2][1] << endl;
-				fout << "Test Date:" << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
-
-			}
-		}
-		fout << endl;
-		if (OTP_final_FF_cal_flag > 0) {
-			e = OTP_final_FF_cal_flag;
-			fout << "-------OTP Final FF test Data------" << endl;
-
-			fout << "Fianl FF test Data flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 : A , 0x13 : B , 0x37 : C" << endl;
-			e++;
-
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~Final FF Test Data Group " << c << endl;
-				e = OTP_final_FF_cal_flag + 6 * k;
-				fout << "Line No.:	" << D[e + 1][0] << D[e + 1][1] << endl;
-				fout << "Equip No.:	" << D[e + 2][0] << D[e + 2][1] << endl;
-				fout << "Test Date:" << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
-
-			}
-		}
-		fout << endl;
-		if (OTP_lsc_cal_flag > 0) {
-			e = OTP_lsc_cal_flag;
-			fout << "-------OTP LSC test Data------" << endl;
-
-			fout << "LSC Test Data flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 : A , 0x13 : B , 0x37 : C" << endl;
-			e++;
-
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~LSC Test Data Group " << c << endl;
-				e = OTP_lsc_cal_flag + 6 * k;
-				fout << "Line No.:	" << D[e + 1][0] << D[e + 1][1] << endl;
-				fout << "Equip No.:	" << D[e + 2][0] << D[e + 2][1] << endl;
-				fout << "Test Date:" << "	20" << D[e + 3][0] << D[e + 3][1] << "-" << D[e + 4][0] << D[e + 4][1] << "-" << D[e + 5][0] << D[e + 5][1] << " " << D[e + 6][0] << D[e + 6][1] << ":00" << endl;
-
-			}
-		}
-		fout << endl;
-		if (OTP_SFR_focus_start[0] > 0) {
-			fout << "-------OTP SFR focus test Data------" << endl;
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~SFR Focus Test Data Group " << c << endl;
-				e = OTP_SFR_focus_start[k];
-				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
-				fout << endl;
-				for (int i = 0; i < 19; i++){
-					fout << "0.";
-					if (DecData[e + i] < 10)
-						fout << "0";
-					fout << checkFF(DecData[e + i]) << "	";
-				}
-				fout << endl;
-			}
-		}
-		fout << endl;
-		if (OTP_SFR_final_start[0] > 0) {
-			fout << "-------OTP SFR Final test Data------" << endl;
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~SFR Fianl Test Data Group " << c << endl;
-				e = OTP_SFR_final_start[k];
-				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
-				fout << endl;
-				for (int i = 0; i < 19; i++){
-					fout << "0.";
-					if(DecData[e + i]<10)
-						fout << "0";
-					fout << checkFF(DecData[e + i]) << "	";
-				}
-				fout << endl;
-			}
-		}
-		fout << endl;
-		if (OTP_SFR_dual_start[0] > 0) {
-
-			fout << "-------OTP SFR Dual test Data------" << endl;
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~SFR Dual Test Data Group " << c << endl;
-				e = OTP_SFR_dual_start[k];
-				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
-				fout << endl;
-				for (int i = 0; i < 19; i++){
-					fout << "0." << checkFF(DecData[e + i]) << "	";
-				}
-				fout << endl;
-			}
-		}
-		fout << endl;
-		if (OTP_master_flag > 0) {
-			e = OTP_master_flag;
-			fout << "-------OTP Master SPL Data------" << endl;
-
-			fout << "Master SPL Data flag:	0x" << D[e][0] << D[e][1] << "	/0x00 : Empty , 0x01 :  A , 0x13 : B , 0x37 : C" << endl;
-			e++;
-
-			for (int k = 0; k < 3; k++) {
-				char c = 'A' + k;
-				fout << "~~~~~~5100K Master SPL Data Group " << c << endl;
-				e = OTP_master_flag + 8 * k;
-
-				fout << "Red:	" << 256 * DecData[e + 1] + DecData[e + 2] << endl;
-				fout << "Blue :	" << 256 * DecData[e + 3] + DecData[e + 4] << endl;
-				fout << "Gr :	" << 256 * DecData[e + 5] + DecData[e + 6] << endl;
-				fout << "Gb :	" << 256 * DecData[e + 7] + DecData[e + 8] << endl;
-			}
-		}
-
-	}
 
 	fout << endl;
 	fout << "-------- Data End-------" << endl;
@@ -4655,8 +4449,10 @@ void widget6::on_pushButton_openBIN_clicked() {
 	QTextCodec *code = QTextCodec::codecForName("gb18030");
 	std::string name = code->fromUnicode(filename).data();
 	
-	if(modelSelect==3)
+	if(modelSelect==3|| modelSelect == 5||modelSelect == 8)
 		EEP_Size=16384;
+	else if(modelSelect == 6 || modelSelect == 7)
+		EEP_Size = 12288;
 
 	ifstream fin(name, std::ios::binary);
 
@@ -4693,7 +4489,7 @@ void widget6::on_pushButton_openBIN_clicked() {
 
 void widget6::on_pushButton_saveBIN_clicked() {
 
-	if (modelSelect == 3)
+	if (modelSelect == 3 || modelSelect == 5 || modelSelect == 8)
 		EEP_Size = 16384;
 
 	if (!ui->pushButton_parser->isEnabled()){

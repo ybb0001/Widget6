@@ -18,7 +18,6 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QTextEdit>
@@ -150,10 +149,8 @@ public:
     QPushButton *pushButton_GPIO_read_3;
     QPushButton *pushButton_parser;
     QPushButton *pushButton_clear;
-    QRadioButton *dataType_OTP;
     QLabel *label_4;
     QTextEdit *model;
-    QRadioButton *dataType_EEPROM;
     QPushButton *pushButton_openBIN;
     QPushButton *pushButton_saveBIN;
     QPushButton *pushButton_saveBIN12;
@@ -667,9 +664,6 @@ public:
         pushButton_clear->setObjectName(QStringLiteral("pushButton_clear"));
         pushButton_clear->setGeometry(QRect(330, 730, 80, 30));
         pushButton_clear->setCheckable(false);
-        dataType_OTP = new QRadioButton(EEPROM);
-        dataType_OTP->setObjectName(QStringLiteral("dataType_OTP"));
-        dataType_OTP->setGeometry(QRect(110, 700, 81, 21));
         label_4 = new QLabel(EEPROM);
         label_4->setObjectName(QStringLiteral("label_4"));
         label_4->setGeometry(QRect(20, 740, 101, 16));
@@ -678,10 +672,6 @@ public:
         model->setGeometry(QRect(110, 730, 41, 31));
         model->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         model->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        dataType_EEPROM = new QRadioButton(EEPROM);
-        dataType_EEPROM->setObjectName(QStringLiteral("dataType_EEPROM"));
-        dataType_EEPROM->setGeometry(QRect(20, 700, 81, 19));
-        dataType_EEPROM->setChecked(true);
         pushButton_openBIN = new QPushButton(EEPROM);
         pushButton_openBIN->setObjectName(QStringLiteral("pushButton_openBIN"));
         pushButton_openBIN->setGeometry(QRect(180, 700, 71, 30));
@@ -703,17 +693,15 @@ public:
         label_3->raise();
         pushButton_parser->raise();
         pushButton_clear->raise();
-        dataType_OTP->raise();
         label_4->raise();
         model->raise();
-        dataType_EEPROM->raise();
         pushButton_openBIN->raise();
         pushButton_saveBIN->raise();
         pushButton_saveBIN12->raise();
 
         retranslateUi(EEPROM);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(EEPROM);
@@ -721,7 +709,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM)
     {
-        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V5_20190807", Q_NULLPTR));
+        EEPROM->setWindowTitle(QApplication::translate("EEPROM", "ISM Memory Parser V8_20191012", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM", "Input Memory Data", Q_NULLPTR));
         label_2->setText(QApplication::translate("EEPROM", "Output Parse Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM", "Result & logs", Q_NULLPTR));
@@ -925,14 +913,12 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("EEPROM", "C-Phy", Q_NULLPTR));
         pushButton_parser->setText(QApplication::translate("EEPROM", "Parse", Q_NULLPTR));
         pushButton_clear->setText(QApplication::translate("EEPROM", "Clear", Q_NULLPTR));
-        dataType_OTP->setText(QApplication::translate("EEPROM", "OTP", Q_NULLPTR));
         label_4->setText(QApplication::translate("EEPROM", "<html><head/><body><p>Model Select</p></body></html>", Q_NULLPTR));
         model->setHtml(QApplication::translate("EEPROM", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1</p></body></html>", Q_NULLPTR));
-        dataType_EEPROM->setText(QApplication::translate("EEPROM", "EEPROM", Q_NULLPTR));
         pushButton_openBIN->setText(QApplication::translate("EEPROM", "Open Bin", Q_NULLPTR));
         pushButton_saveBIN->setText(QApplication::translate("EEPROM", "Save Bin", Q_NULLPTR));
         pushButton_saveBIN12->setText(QApplication::translate("EEPROM", "Bin123", Q_NULLPTR));
