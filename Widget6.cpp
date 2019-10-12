@@ -1230,11 +1230,11 @@ void lsc_Parse(int S, int E) {
 			}
 	}
 
-	if (modelSelect == 3|| modelSelect == 4 || modelSelect == 8 || modelSelect == 6) {
+	if (modelSelect == 3|| modelSelect == 4 || modelSelect == 8 || modelSelect == 6 || modelSelect == 7) {
 		int e = S;
 		if (modelSelect == 8)
 			e += 2;
-		if (modelSelect == 6)
+		if (modelSelect == 6 || modelSelect == 7)
 			e += 4;
 
 		for (int i = 0; i < 13; i++)
@@ -2063,7 +2063,7 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 			start = start + offset2;
 		}
 		if (modelSelect == 8)	start++;
-		if (modelSelect == 6)	end--;
+		if (modelSelect == 6 || modelSelect == 7)	end--;
 
 		if (modelSelect == 5){	
 			if(checkSumEnd- checkSumStart<4){
@@ -2105,7 +2105,7 @@ void widget6::CheckSum_Check(int checkSumStart, int checkSumEnd, int offset1, in
 		}
 
 		fout << chk[0] << chk[1] << "	";
-		if (modelSelect == 3|| modelSelect==4|| modelSelect == 6 || (checkSumStart>checkSumEnd&&offset2==0))
+		if (modelSelect == 3|| modelSelect==4|| modelSelect == 6 || modelSelect == 7 || (checkSumStart>checkSumEnd&&offset2==0))
 			fout << getFlag(checkSumEnd - 1) << "	" << endl;
 		else
 			fout << getFlag(checkSumStart) << "	" << endl;
@@ -2248,7 +2248,7 @@ void fuse_Parse(int S, int E) {
 	if (fuseIDStart > 0) {
 		int e = S + 1, len =9;
 
-		if (modelSelect == 6) {
+		if (modelSelect == 6 || modelSelect == 7) {
 			e--;
 		}
 		fout << "Sensor Fuse ID:	";
@@ -2268,7 +2268,7 @@ void QR_Parse(int S, int E) {
 		e--;
 		qrl = 17;
 	}
-	if(modelSelect == 8|| modelSelect == 6) {
+	if(modelSelect == 8|| modelSelect == 6 || modelSelect == 7) {
 		qrl = 19;
 	}
 	fout << "QR Code:	";
@@ -2452,7 +2452,7 @@ void OIS_Hall_Parse(int S, int E) {
 
 	}
 
-	if (modelSelect == 6) {
+	if (modelSelect == 6 || modelSelect == 7) {
 
 		tmp = 0;
 		for (int i = 3; i >= 0; i--) {
@@ -2534,9 +2534,9 @@ void OIS_Hall_Parse(int S, int E) {
 		gyro_Out(e, false);
 
 		e = e + 4;
-		fout << "SR X:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+		fout << "SR X:	" << (int)DecData[e + 1] << "." << (int)DecData[e] << endl;
 		e += 2;
-		fout << "SR Y:	" << (float)(256 * DecData[e] + DecData[e + 1]) / 10 << endl;
+		fout << "SR Y:	" << (int)DecData[e + 1] << "." << (int)DecData[e] << endl;
 	}
 
 	fout << endl;
@@ -2635,7 +2635,7 @@ void af_Parse(int S, int E) {
 		fout << "Sensor thermal(Mac):	" << (int)DecData[e] << endl;
 	}
 
-	if (modelSelect == 6) {
+	if (modelSelect == 6 || modelSelect == 7) {
 		fout << "Mac:	" << DecData[e] + DecData[e + 1] * 256 << endl;
 		fout << "Sensor thermal(Mac):	" << (int)DecData[e+2] << endl;
 		e += 4;
@@ -2784,9 +2784,9 @@ void awb_Parse(int S, int E){
 
 	}
 
-	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8 || modelSelect == 6) {
+	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8 || modelSelect == 6 || modelSelect == 7) {
 
-		if (modelSelect == 6)e--;
+		if (modelSelect == 6 || modelSelect == 7)e--;
 
 		fout << "~~~5100K AWB Cal Data:" << endl;
 		Oppo_AWB_Parse(e, 0, "Golden_");
@@ -2858,15 +2858,16 @@ void gain_Map_Parse(int S, int E) {
 
 	}
 
-	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8) {
+	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 7 || modelSelect == 8) {
+
 		int e = S;
-		if (modelSelect == 8)
-			e++;
+		if (modelSelect == 8)e++;
 
 		fout << "PDAF Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
 		fout << "Gain map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
 		fout << "Gain map Height:	" << DecData[e + 4] + DecData[e + 5] * 256 << endl;
 		e = e + 6;
+		if (modelSelect == 8)e+=2;
 
 		for (int i = 0; i < 13; i++)
 			for (int j = 0; j < 17; j++) {
@@ -2881,7 +2882,7 @@ void gain_Map_Parse(int S, int E) {
 			}
 	}
 
-	if (modelSelect == 6) {
+	if (modelSelect == 6 ) {
 		int e = S;
 		for (int i = 0; i < 13; i++)
 			for (int j = 0; j < 17; j++) {
@@ -2965,10 +2966,9 @@ void DCC_Parse(int S, int E) {
 		}
 	}
 
-	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 8) {
+	if (modelSelect == 3 || modelSelect == 4 || modelSelect == 7 || modelSelect == 8) {
 
-		if (modelSelect == 8)
-			e++;
+		if (modelSelect == 8)e++;
 
 		fout << "DCC QC Version:	" << DecData[e + 0] + DecData[e + 1] * 256 << endl;
 		fout << "DCC map Width:	" << DecData[e + 2] + DecData[e + 3] * 256 << endl;
@@ -2976,6 +2976,8 @@ void DCC_Parse(int S, int E) {
 
 		//DCC Data map:
 		e = e + 6;
+		if (modelSelect == 8)e+=2;
+
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 8; j++) {
 				DCC[i][j] = DecData[e] + 256 * DecData[e + 1];
@@ -2984,7 +2986,7 @@ void DCC_Parse(int S, int E) {
 		}
 	}
 
-	if ( modelSelect == 6) {
+	if ( modelSelect == 6 ) {
 
 		for (int i = 0; i < 6; i++) 
 			for (int j = 0; j < 8; j++) {
@@ -3498,7 +3500,7 @@ void widget6::on_pushButton_parser_clicked()
 			CheckSum_Check(infoStart, infoEnd, 0, 0, "Info");
 		}
 
-		if (modelSelect == 6) {
+		if (modelSelect == 6|| modelSelect == 7) {
 			CheckSum_Check(infoStart, infoEnd, 1, 0, "Info");
 		}
 
@@ -3569,7 +3571,7 @@ void widget6::on_pushButton_parser_clicked()
 
 			fout << "~~~~~~~~ LSI CheckSum ~~~~~~~~" << endl;
 			CheckSum_Check(headerLSIStart, headerLSIEnd, -52, 0, "head");
-			CheckSum_Check(moduleLSIStart, moduleLSIEnd, -58, 0, "Module");
+			CheckSum_Check(moduleLSIStart, moduleLSIEnd, -58, -16, "Module");
 			CheckSum_Check(awbLSIStart, awbLSIEnd, -102,0, "AWB");
 			CheckSum_Check(afLSIStart, afLSIEnd, -32,0, "LSI_AF");
 			CheckSum_Check(lscLSIStart, lscLSIEnd, -5844, 0, "LSC");
