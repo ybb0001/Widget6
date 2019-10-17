@@ -2202,15 +2202,15 @@ void basicInfo_Parse(int S,int E) {
 			e++;
 		fout << "Vender ID:	0x" << D[e][0] << D[e][1] << "	//SEMCO = 0x03" << endl;
 		e+=2;
-		fout << "Production Date:	" << D[e+2][0] << D[e+2][1] << D[e + 3][0] << D[e + 3][1] << "-" <<DecData[e+1] << "-" << DecData[e] << endl;
+		fout << "Production Date:	" << (int)DecData[e+3] << (int)DecData[e + 2] << "-" << (int)DecData[e+1] << "-" << (int)DecData[e] << endl;
 		e += 4;
-		fout << "Sensor ID:	0x" << D[e][0] << D[e][1] << D[e + 1][0] << D[e + 1][1] <<  endl;
+		fout << "Sensor ID:	0x" << D[e + 1][0] << D[e + 1][1]  << D[e][0] << D[e][1] <<   endl;
 		e += 2;
 		fout << "Lens ID:	0x" << D[e][0] << D[e][1] <<  endl;
 		e += 2;
 		fout << "VCM ID:	0x" << D[e][0] << D[e][1] <<  endl;
 		e += 2;
-		fout << "Driver IC:	0x" << D[e][0] << D[e][1] << "	//SEMCO IC=0x08" << endl;
+		fout << "Driver IC:	0x" << D[e][0] << D[e][1] << endl;
 		e += 2;
 		fout << "Module Version:	0x" << D[e][0] << D[e][1] << endl;
 		e += 1;
@@ -2248,9 +2248,13 @@ void fuse_Parse(int S, int E) {
 	if (fuseIDStart > 0) {
 		int e = S + 1, len =9;
 
-		if (modelSelect == 6 || modelSelect == 7) {
+		if (modelSelect == 6 ) {
 			e--;
 		}
+		if (modelSelect == 7) {
+			e--; len = 6;
+		}
+
 		fout << "Sensor Fuse ID:	";
 		for (int i = 0; i < len; i++) {
 			fout << D[e + i][0] << D[e + i][1];
@@ -3295,9 +3299,9 @@ void SFR_display(int group, int e) {
 	fout << "SFR Garde:	0x" << D[e][0] << D[e][1] << endl;
 	e++;
 
-	fout << "Center_1	"; 
+	fout << "Center_1	";
 	int g = group - 1;
-	if (modelSelect >2) {
+	if (modelSelect > 2) {
 		fout << "Center_2	";
 		g--;
 	}
@@ -3307,15 +3311,21 @@ void SFR_display(int group, int e) {
 	}
 	fout << endl;
 
-	for (int i = 0; i < group; i++) {
-		fout << "0.";
-		if (DecData[e + i] < 10)
-			fout << "0";
-		fout << checkFF(DecData[e + i]) << "	";
+	if (modelSelect != 5){
+		for (int i = 0; i < group; i++) {
+			fout << "0.";
+			if (DecData[e + i] < 10)
+				fout << "0";
+			fout << checkFF(DecData[e + i]) << "	";
+		}
+	}
+	else {
+		for (int i = 0; i < group; i++) {
+			fout << "0.";
+			fout << D[e + i][0] << D[e + i][1] <<"	";
+		}
 	}
 	fout << endl;
-
-
 }
 
 
@@ -4279,13 +4289,10 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "AF Code diff NG:	"<< D[e][0] << D[e][1] << endl;
 			}
 
-			if (modelSelect == 5) {
+			if (modelSelect == 5) 
 				SFR_display(34, e);
-
-			}
-
+			
 		}
-
 
 		if (modelSelect == 4) {
 
@@ -4299,7 +4306,6 @@ void widget6::on_pushButton_parser_clicked()
 			fout << "UW 10cm AF Code:	";
 			fout << DecData[e + 1] * 256 + DecData[e]<<endl;
 		}
-
 
 		if (modelSelect == 3) {
 
@@ -4332,13 +4338,13 @@ void widget6::on_pushButton_parser_clicked()
 
 		if (macSFRStart > 0) {
 			fout << "--------Main Mac SFR data-------" << endl;
-			e = infSFRStart;
+			e = macSFRStart;
 
 			if (modelSelect < 3) {
 				SFR_display(27, e);
 				fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
 			}
-			if (modelSelect == 5) {
+			if (modelSelect>2) {
 				SFR_display(34, e);
 			}
 			fout << endl;
