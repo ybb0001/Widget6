@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ISM Memory Parser V8_20191012</string>
+   <string>ISM Memory Parser V9_20191117</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">

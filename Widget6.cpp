@@ -1,3 +1,5 @@
+
+
 #include "widget6.h"
 #include "ui_widget6.h"
 #include <QString>
@@ -3305,6 +3307,7 @@ void SFR_display(int group, int e) {
 		fout << "Center_2	";
 		g--;
 	}
+	if (modelSelect == 6|| modelSelect == 7|| modelSelect == 8) e += 3;
 
 	for (int i = 0; i < g; i++) {
 		fout << "Group_" << i / 8 + 1 << "_" << i % 8 + 1 << "	";
@@ -3603,7 +3606,13 @@ void widget6::on_pushButton_parser_clicked()
 		CheckSum_Check(AECStart, AECEnd, 1, 0, "D_AEC");
 		CheckSum_Check(QSCStart, QSCEnd, 1, 0, "QSCCal");
 		CheckSum_Check(distortionStart, distortionEnd, 1, 0, "Distor");
-		
+
+		if (modelSelect == 8) {
+			fout << "~~~~~~~~ OPPO Cal CheckSum ~~~~~~~~" << endl;
+			CheckSum_Check(5168, 9119, 1, 0, "M+W");
+			CheckSum_Check(9120, 10799, 1, 0, "M+T");
+			CheckSum_Check(10800, 14255, 1, 0, "Distor");
+		}
 
 		if (totalCheckSum > 0) {
 			fout << "Total	";
@@ -4070,7 +4079,7 @@ void widget6::on_pushButton_parser_clicked()
 
 			fout << "AA Result flag :	" << getFlag(e) << endl;
 			e++;
-			fout << "Equipment type:	" << D[e][0] << D[e][1];
+			fout << "Equipment type:	" ;
 			fout << '(';                                                                                      
 
 			if (D[e][1] == 'A')
@@ -4109,6 +4118,7 @@ void widget6::on_pushButton_parser_clicked()
 			else
 				fout << ":00" << endl;
 
+			if (modelSelect == 6 || modelSelect == 7 || modelSelect == 8) e += 2;
 
 			tmp = 0;
 			for (int i = 3; i >= 0; i--) {
@@ -4149,16 +4159,17 @@ void widget6::on_pushButton_parser_clicked()
 			e += 4;
 
 			if (modelSelect >1 ) {
-				fout << "Wide AA AF Code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
+				fout << "AA AF Code:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 				e += 2;
 			}
+			if (modelSelect == 6 || modelSelect == 7 || modelSelect == 8) e += 2;
 
 			fout << "optical Center X:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 			e += 2;
 			fout << "optical Center Y:	" << 256 * DecData[e] + DecData[e + 1] << endl;
 			e += 2;
 
-			if (modelSelect == 2 || modelSelect == 3) {
+			if (modelSelect > 2 ) {
 				fout << "AA OC BV:	" << (int)DecData[e] << endl;
 				e++;
 			}
@@ -4171,16 +4182,13 @@ void widget6::on_pushButton_parser_clicked()
 				}
 			}
 
-			if (modelSelect == 3 || modelSelect == 4) {
-				e++;
-				fout << "SEMCO_CPS_RES:	";
-				fout <<D[e][0]<<D[e][1] ;
-				fout << " 00(OK)/0F(NG)"<<endl;
-
-				e++;
+			if (modelSelect > 2) {
 				fout << "SEMCO_CPS_DATA:	";
 				fout << D[e][0] << D[e][1] << D[e+1][0] << D[e+1][1]<< endl;
 				e += 2;
+				fout << "SEMCO_CPS_RES:	";
+				fout << D[e][0] << D[e][1];
+				fout << " 00(OK)/0F(NG)" << endl;
 			}
 
 			if (modelSelect == 3)
@@ -4289,8 +4297,8 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "AF Code diff NG:	"<< D[e][0] << D[e][1] << endl;
 			}
 
-			if (modelSelect == 5) 
-				SFR_display(34, e);
+			if (modelSelect > 5) 
+				SFR_display(38, e);
 			
 		}
 
@@ -4335,7 +4343,6 @@ void widget6::on_pushButton_parser_clicked()
 
 		}
 
-
 		if (macSFRStart > 0) {
 			fout << "--------Main Mac SFR data-------" << endl;
 			e = macSFRStart;
@@ -4345,53 +4352,53 @@ void widget6::on_pushButton_parser_clicked()
 				fout << "Lens postion:	" << (int)DecData[e + 26] << endl;
 			}
 			if (modelSelect>2) {
-				SFR_display(34, e);
+				SFR_display(38, e);
 			}
 			fout << endl;
 		}
 
-			if (MasterSPLStart > 0) {
-				fout << "--------Master SPL Info-------" << endl;
-				e = MasterSPLStart;
-				string str = getFlag(e);
-				fout << "Master SPL flag :	" << str << endl;
-				e++;
+		if (MasterSPLStart > 0) {
+			fout << "--------Master SPL Info-------" << endl;
+			e = MasterSPLStart;
+			string str = getFlag(e);
+			fout << "Master SPL flag :	" << str << endl;
+			e++;
 
-				if (str[1] != 'N') {
+			if (str[1] != 'N') {
 
-					fout << "~~~5100K AWB Cal Data:" << endl;
+				fout << "~~~5100K AWB Cal Data:" << endl;
 
-					fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
-					fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
-					fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
-					fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
-					fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
-					fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
+				fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0) * 256 + hex2Dec(e + 1)) / 1024 << endl;
+				fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 2) * 256 + hex2Dec(e + 3)) / 1024 << endl;
+				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 4) * 256 + hex2Dec(e + 5)) / 1024 << endl;
+				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 6) * 256 + hex2Dec(e + 7)) / 1024 << endl;
+				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 8) * 256 + hex2Dec(e + 9)) / 1024 << endl;
+				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0xA) * 256 + hex2Dec(e + 0xB)) / 1024 << endl;
 
-					fout << "~~~3100K AWB Cal Data:" << endl;
-					fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
-					fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
-					fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
-					fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
-					fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
-					fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
+				fout << "~~~3100K AWB Cal Data:" << endl;
+				fout << "Gain R/Gr :	" << (float)(hex2Dec(e + 0xC) * 256 + hex2Dec(e + 0xD)) / 1024 << endl;
+				fout << "Gain B/Gr :	" << (float)(hex2Dec(e + 0xE) * 256 + hex2Dec(e + 0xF)) / 1024 << endl;
+				fout << "Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x10) * 256 + hex2Dec(e + 0x11)) / 1024 << endl;
+				fout << "Golden Sample,Gain R/Gr :	" << (float)(hex2Dec(e + 0x12) * 256 + hex2Dec(e + 0x13)) / 1024 << endl;
+				fout << "Golden Sample,Gain B/Gr :	" << (float)(hex2Dec(e + 0x14) * 256 + hex2Dec(e + 0x15)) / 1024 << endl;
+				fout << "Golden Sample,Gain Gr/Gb :	" << (float)(hex2Dec(e + 0x16) * 256 + hex2Dec(e + 0x17)) / 1024 << endl;
 
-				}
 			}
+		}
 
-			if (Dual_INF_SFRStart > 0) {
-				// Dual INF SFR data:
-				fout << "--------Dual INF SFR data-------" << endl;
-				e = Dual_INF_SFRStart;
-				fout << "Dual INF SFR data:	" << endl;
+		if (Dual_INF_SFRStart > 0) {
+			// Dual INF SFR data:
+			fout << "--------Dual INF SFR data-------" << endl;
+			e = Dual_INF_SFRStart;
+			fout << "Dual INF SFR data:	" << endl;
 
-				fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
-				fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
-				fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
+			fout << "Center	" << "0.3TLV	" << "0.3TLH	" << "0.3TRV	" << "0.3TRH	" << "0.3BLH	" << "0.3BLV	" << "0.3BRH	" << "0.3BRV	" << "0.3Left	" << "0.3Righ	";
+			fout << "0.7TLV	" << "0.7TLH	" << "0.7TRV	" << "0.7TRH	" << "0.7BLH	" << "0.7BLV	" << "0.7BRH	" << "0.7BRV	";
+			fout << "0.9TLV	" << "0.9TLH	" << "0.9TRV	" << "0.9TRH	" << "0.9BLH	" << "0.9BLV	" << "0.9BRH	" << "0.9BRV	" << endl;
 
-				for (int i = 0; i < 27; i++)
-					fout << "0." << checkFF(DecData[e + i]) << "	";
-			}
+			for (int i = 0; i < 27; i++)
+				fout << "0." << checkFF(DecData[e + i]) << "	";
+		}
 
 
 	fout << endl;
